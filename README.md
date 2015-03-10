@@ -36,9 +36,9 @@ We turn on interaction with the graph by making filling out the the arrays:
 - **merge_by:** Give the user the ability to merge nodes based based on one or more columns in the dataset.
 - **details_view:** Provide the user with the posibility to explore specific attributes of the nodes when clikcing it.
 
-* *label:* The name of the filter to appear in ANna (string).
-* *gephiCol:* The name of the column you wish to apply as written in the Gexf file (or Gephi data labaoratory). Setting the first coloumn in gephiCol to "" means that no filter should be applied (string). 
-* *keepNeighbors:* If true, then the filter will not only affect the specific nodes or should the neighberhood of the node likewise be affected (true/false).
+> *label:* The name of the filter to appear in ANna (string).
+> *gephiCol:* The name of the column you wish to apply as written in the Gexf file (or Gephi data labaoratory). Setting the first coloumn in gephiCol to "" means that no filter should be applied (string). 
+> *keepNeighbors:* If true, then the filter will not only affect the specific nodes or should the neighberhood of the node likewise be affected (true/false).
 
 
 ##Troubleshouting
