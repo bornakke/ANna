@@ -1,0 +1,100 @@
+body { 
+    background: #eee;
+    font-family: "lucida grande", tahoma, verdana, arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+#wrap {
+    width: 1200px;
+    margin: 0 auto;
+}
+
+#column-1 {
+    width: 800px;
+    float: left;
+}
+
+#column-2 {
+    width: 375px;
+    float: right;
+    padding-left:25px;
+}
+
+#header {
+    width: 100%;
+    float: left;
+}
+#titel {
+	float:left;
+	width: 690px;
+}
+#change_graph{
+	font-size: 12pt;
+}
+#header h1 {
+    font-size: 20pt;
+}
+
+#header h2 {
+    font-size: 16pt;
+}
+
+#logos {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.logo {
+    padding: 4px;
+}
+
+a img {
+    border: none;
+}
+
+h1, h2 {
+    margin: 5px 0;
+}
+
+h4{
+	font-size:10pt;
+}
+a {
+    color: blue;
+    /* text-decoration: none; */
+}
+
+
+#sigma-container {
+    width: 100%;
+    height: 500px;
+    background: #f2f0e9;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+#navigation-wrapper {
+    width: 100%;
+}
+
+#navigation-wrapper select {
+    width: 100%;
+}
+
+#graphs, .basicgraph{
+	float:left;
+	margin: 10px;
+}
+#graphs h4{
+text-align:center;
+}
+.logo{
+width:150px;
+max-height: 150px;
+display:block;
+margin:auto;
+}
+#details_view{
+margin: 10px;
+}
