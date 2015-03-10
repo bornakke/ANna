@@ -1,7 +1,7 @@
 # ANna - v0.5
 Actor-Network NAvigator is a tool to publish big network as interactive network visualizations developed in collaboration between the SceincePo Medialab (http://tools.medialab.sciences-po.fr/) and Copenhagen University (KU.dk).
 
-## Background
+### Background
 
 ANna is a tool to publish big network as interactive network visualizations. ANna got its inspiration from the recent tool, ManyLines, which attempts to sustain the users explore of a network while parallel offering tool to construct a narrative around this exploration through the ability to take and arrange screenshots of the network.  While ManyLines is an excellent tools for researchers looking for a way to easily tell a story of a network, it is less minded toward letting the end user explore the network themselves. Also the tool, being mainly for users that have some but not a lot of experience in the field of network science, leaving  out more advanced filtering that network experts would miss as well as the user group with no prio knowledge of network manipulation.
 
