@@ -29,16 +29,16 @@ ANna thus attempts to fill this gap by attempting to distribute the exploration 
 ####Graph _by
 We turn on interaction with the graph by making filling out the the arrays:
 
-**-filter_by:** Give the user the ability to filter based on one or more columns in the dataset.
-**-highlight_by:** Give the user the ability to highlight based on one or more columns in the dataset.
-**-color_by:** Give the user the ability to color graph based on one or more columns in the dataset.
-**-compare_by:** Give the user the ability to compare nodes based on one or more columns in the dataset.
-**-merge_by:** Give the user the ability to merge nodes based based on one or more columns in the dataset.
-**-details_view:** Provide the user with the posibility to explore specific attributes of the nodes when clikcing it.
+**- filter_by:** Give the user the ability to filter based on one or more columns in the dataset.
+**- highlight_by:** Give the user the ability to highlight based on one or more columns in the dataset.
+**- color_by:** Give the user the ability to color graph based on one or more columns in the dataset.
+**- compare_by:** Give the user the ability to compare nodes based on one or more columns in the dataset.
+**- merge_by:** Give the user the ability to merge nodes based based on one or more columns in the dataset.
+**- details_view:** Provide the user with the posibility to explore specific attributes of the nodes when clikcing it.
 
-*label:* The name of the filter to appear in ANna (string).
-*gephiCol:* The name of the column you wish to apply as written in the Gexf file (or Gephi data labaoratory). Setting the first coloumn in gephiCol to "" means that no filter should be applied (string). 
-*keepNeighbors:* If true, then the filter will not only affect the specific nodes or should the neighberhood of the node likewise be affected (true/false).
+* *label:* The name of the filter to appear in ANna (string).
+* *gephiCol:* The name of the column you wish to apply as written in the Gexf file (or Gephi data labaoratory). Setting the first coloumn in gephiCol to "" means that no filter should be applied (string). 
+* *keepNeighbors:* If true, then the filter will not only affect the specific nodes or should the neighberhood of the node likewise be affected (true/false).
 
 
 ##Troubleshouting
