@@ -17,24 +17,24 @@ ANna thus attempts to fill this gap by attempting to distribute the exploration 
 
 ###ini.json
 ####Glboal settings:
-**-header:** Global header for the project (string)
-**-graph1, graph2 etc.:** Defines the number of graphs to be drawn. Simply copy/paste graph1 and rename it to graph2 if you want to add another graph to the navigation. 
+- **header:** Global header for the project (string)
+- **graph1, graph2 etc.:** Defines the number of graphs to be drawn. Simply copy/paste graph1 and rename it to graph2 if you want to add another graph to the navigation. 
 
 ####Graph setup 
-**-graph_header:** The header that will be shown on top of your page (string)
-**-basemap:** URL to the gexf file that you want to make explorative (url)
-**-logo_url:** Optional logo for the network when making avaiable more than one network (url)
-**-spatilize:** If true, ongoingly Spatilize network with ForceAtlas2 (true/false).
+- **graph_header:** The header that will be shown on top of your page (string)
+- **basemap:** URL to the gexf file that you want to make explorative (url)
+- **logo_url:** Optional logo for the network when making avaiable more than one network (url)
+- **spatilize:** If true, ongoingly Spatilize network with ForceAtlas2 (true/false).
 
 ####Graph _by
 We turn on interaction with the graph by making filling out the the arrays:
 
-**- filter_by:** Give the user the ability to filter based on one or more columns in the dataset.
-**- highlight_by:** Give the user the ability to highlight based on one or more columns in the dataset.
-**- color_by:** Give the user the ability to color graph based on one or more columns in the dataset.
-**- compare_by:** Give the user the ability to compare nodes based on one or more columns in the dataset.
-**- merge_by:** Give the user the ability to merge nodes based based on one or more columns in the dataset.
-**- details_view:** Provide the user with the posibility to explore specific attributes of the nodes when clikcing it.
+- **filter_by:** Give the user the ability to filter based on one or more columns in the dataset.
+- **highlight_by:** Give the user the ability to highlight based on one or more columns in the dataset.
+- **color_by:** Give the user the ability to color graph based on one or more columns in the dataset.
+- **compare_by:** Give the user the ability to compare nodes based on one or more columns in the dataset.
+- **merge_by:** Give the user the ability to merge nodes based based on one or more columns in the dataset.
+- **details_view:** Provide the user with the posibility to explore specific attributes of the nodes when clikcing it.
 
 * *label:* The name of the filter to appear in ANna (string).
 * *gephiCol:* The name of the column you wish to apply as written in the Gexf file (or Gephi data labaoratory). Setting the first coloumn in gephiCol to "" means that no filter should be applied (string). 
