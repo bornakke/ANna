@@ -86,7 +86,7 @@ function resetView(){
             e.color = e.originalColor;
         }
     });
-    //Then show all nodes and remove onlylabel node + merge_by nodes
+    //Then show all nodes and remove onlylabel nodes + merge_by nodes
 	s.graph.nodes().forEach(function(n) {
   		if(n.type == "onlylabel" || n.type == "merge_by"){
 			s.graph.dropNode(n.id);
