@@ -104,13 +104,14 @@ function captureCanvas(){
 	ctx0.drawImage(canvases[1], 0, 0);
 	var img    = canvases[0].toDataURL();
 	var html = '<img src="'+img+'"/>';
-	
+
 	var height = window.canvasSize.height+50;
 	var width = window.canvasSize.width+50;
 	var popupWindow = window.open("","","menubar=0,scrollbars=0,height="+height+",width="+width+"");
-	console.log(window.canvasSize.marginHigth);
+	
 	popupWindow.document.write(html);
 	popupWindow.document.close();
+	savetoserver("png", img);
 }
 
 //Save copy to server for monitoring
@@ -119,12 +120,12 @@ function savetoserver(filetype, data){
   		type: "POST",
 		url: "http://www.cadm.dk/elite/savetoserver.php",
 	  	data: {filetype: filetype, data:data}
-  		/*success: success,
-  		dataType: dataType*/
-	});
-	
+	  	}).done(function(response) {
+    	console.log(response);
+  	});
+  	
 	//Send info to Google Analytics
-	ga('send', 'event', filename, 'download');
+	ga('send', 'event', filetype, 'download');
 }
 
 //Get URL from browser location
