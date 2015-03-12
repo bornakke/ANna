@@ -1,7 +1,7 @@
 {
  "globalsettings":
  	{
- 	"header": "##"
+ 	"header": "ANna v0.4"
  	},
  "graph1":
 	{
@@ -31,12 +31,12 @@
 				"label": "Merge by",
 				"gephiCol": ["type", "from_user_timezone"]
 				},
+	"size_by": ["original", "degree", "indegree", "outdegree"],
 	"details_view": {
 				"label": ["Location", "Timezone", "connections"],
 				"gephiCol": ["location", "from_user_timezone", "connections"],
 				"keepNeighbors": true
-				},
-	"node_size": ["original", "degree", "indegree", "outdegree"]
+				}
 	},
  "graph2":
 	{

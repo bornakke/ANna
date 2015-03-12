@@ -67,14 +67,27 @@ function drawSelectgraph(full_ini){
 }
 
 function resetCamera(){
+	unclickNode(); //Remove user selctions if any
+	
 	var camera = s.camera;
     sigma.misc.animation.camera(
       camera,
-      {x: 0, y: 0, angle: 0, ratio: 1},
+      {x: 200, y: 0, angle: 0, ratio: 1},
       {duration: 150}
     );
 }
 
+function unclickNode(){
+	//change the sigma background back
+	$("#sigma-container").css("background-color", "#f2f0e9");
+	//hide details view:
+	$("#details_view").hide();
+	s.graph.nodes().forEach(function(n) {
+		n.type = "def";
+		n.color = n.originalColor;
+	});
+	s.refresh();
+}
 //Reset view everytime we do a search
 function resetView(){
 	//First remove all edges that have been added
@@ -86,7 +99,7 @@ function resetView(){
             e.color = e.originalColor;
         }
     });
-    //Then show all nodes and remove onlylabel nodes + merge_by nodes
+    //Then show all nodes and remove onlylabel node + merge_by nodes
 	s.graph.nodes().forEach(function(n) {
   		if(n.type == "onlylabel" || n.type == "merge_by"){
 			s.graph.dropNode(n.id);
@@ -104,7 +117,6 @@ function resetView(){
 	s.settings({autoRescale: true, scalingMode:"inside"});
 	//Undisable all filters
 	$(":disabled").prop('disabled',false).trigger("chosen:updated");
-	
 }
 
 function disableFilters(filters){	
@@ -164,13 +176,13 @@ function fillDetails(node, neighbors){
 			$("#details_view").append(''+labels[i]+': '+node.attributes[col]+'<br>');
 		}
 	});
+	$("#details_view").show( );
 }
 
 function drawGraph() {
     ////////////////////////////////////////////////////////////////////////
 	//Gloablly define sigma instance
 	window.s = new sigma('sigma-container', {settings: {}});
-	
 	//Parse data
     sigma.parsers.gexf(window.ini.basemap, function(graph) {
 		
@@ -229,12 +241,21 @@ function drawGraph() {
             	}
     		
     			$("#sigma-container").css("background-color", "#d9d3be");
+
     			fillDetails(node,neighbors);
             
             	s.refresh();
             }
 		});
 		
+		////////////////////////////////////////////////////////////////////////
+        // When the stage is clicked, we just color each
+        // node and edge with its original color.
+        s.bind('clickStage', function(e) {
+            unclickNode();
+        });
+		
+	resetCamera(); //Reset camera to move the graph a little to the right	
 	s.refresh();
 
     //Create and fill select boxes, remember selects_values for later
@@ -246,8 +267,8 @@ function drawGraph() {
 	selects_values["compare_by"] = get_attributes("compare_by", false);
 	selects_values["merge_by"] = get_attributes("merge_by", false);
 	
-	//Create reset button
-	create_reset = $("#column-2").append('<div class="reset"><button onclick="resetCamera()" type="button">reset zoom</button>');
+	//Initiate search tab
+	$('#menu a:last').tab('show');
 	
 	updateStatus("Database indlæst.");
     });
@@ -358,8 +379,8 @@ function getIds(gephiCol, selector, keepNeighbors, nodes){
 //Populate navigation based on _by
 function create_select(by, _by, select_value, i, multi){ 
 	if(multi){
-		$("#navigation-wrapper").append('<div class="'+ by +'" ><label for="'+by+'_'+_by.gephiCol[i]+'">'+_by.label[i]+' ('+ by +')</label><select id="'+by+'_'+_by.gephiCol[i]+'" class="chosen-select" multiple="'+ multi +'">');
-	
+		$("#"+by+"_container").append('<label for="'+by+'_'+_by.gephiCol[i]+'">'+_by.label[i]+'</label><select id="'+by+'_'+_by.gephiCol[i]+'" class="chosen-select" multiple="'+ multi +'">');
+		
 		//Adding tags to multiselects...
 		select_value.map(function(tag) {
 			$("#"+by+'_'+_by.gephiCol[i]).append($('<option/>', { value: tag, text: tag }));
@@ -373,7 +394,9 @@ function create_select(by, _by, select_value, i, multi){
     	$("#"+by+'_'+_by.gephiCol[i]).chosen(multi_config);
 	}
 	else{
-		$("#navigation-wrapper").append('<div class="'+ by +'" ><label for="'+by+'">'+_by.label+' ('+ by +')</label><select id="'+by+'" class="chosen-select">');
+		$("#"+by+"_container").append('<label for="'+by+'">'+_by.label+'</label><select id="'+by+'" class="chosen-select">');
+		
+		//$("#navigation-wrapper").append('<div class="'+ by +'" ><label for="'+by+'">'+_by.label+' ('+ by +')</label><select id="'+by+'" class="chosen-select">');
 		$("#"+by+"").append($('<option/>', { value: "", text: "" })); //Add blank first option to allow deselect
 	
 		//Adding tags to select...
@@ -388,6 +411,9 @@ function create_select(by, _by, select_value, i, multi){
     
 		$("#"+by+"").chosen(single_config);
 	}
+	//Show the tab
+	var id = $("#"+by+"_container").parent().attr('id');
+	$("#"+id+"_menu").show();
 }
 
 // Make search function available
@@ -617,9 +643,9 @@ function performSearch() {
     
     //Update status message
     if(keepNodes.length > 1 || keepNodes.length == 0){
-    	updateStatus("Viser " + keepNodes.length + " resultater.");
+    	updateStatus("Showing " + keepNodes.length + " results.");
     }
     else{
-    	updateStatus("Viser 1 resultat");
+    	updateStatus("Showing 1 result");
     }
 }
