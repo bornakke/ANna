@@ -114,7 +114,8 @@
 			</div>
 			
 			<div id="status_container" class="col-md-2">
-				<button type="button" id="status" data-loading-text="Loading Search engine..." data-complete-text="Network loaded." data-error-text="The system encountered an error" class="btn btn-info btn-block" autocomplete="off"></button>
+				<button type="button" id="status" data-loading-text="Loading Search engine..." data-complete-text="Network loaded." data-error-text="The system encountered an error" data-embed-text="Embed code generated:" class="btn btn-info btn-block" autocomplete="off"></button>
+				<input type="text" class="form-control" id="embed">
 			</div>
 			<div id="dialog" title="Select graph">
   				<p>Please chose basic graph to navigate:</p>
@@ -134,12 +135,17 @@
 
 					<div id="savetoSVG" class="col.md-1">
 						<button type="button" class="btn btn-default" aria-label="Save to SVG" onclick="captureSVG(); this.blur();">
-  							<span class="glyphicon glyphicon-save" aria-hidden="true"></span> Capture SVG
+  							<span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span> Capture SVG
 						</button>
 					</div>
 					<div id="savetoCanvas" class="col.md-1">
 						<button type="button" class="btn btn-default" aria-label="Save to Canvas" onclick="captureCanvas(); this.blur();">
-  							<span class="glyphicon glyphicon-save" aria-hidden="true"></span> Capture Canvas
+  							<span class="glyphicon glyphicon-picture" aria-hidden="true"></span> Capture Canvas
+						</button>
+					</div>
+					<div id="embedSigma" class="col.md-1">
+						<button type="button" class="btn btn-default" aria-label="Generate an embed code for your current network" onclick="createEmbed(); this.blur();">
+  							<span class="glyphicon glyphicon-link" aria-hidden="true"></span> Embed network
 						</button>
 					</div>
 				</div>

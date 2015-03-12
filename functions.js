@@ -99,7 +99,6 @@ function drawGraph() {
             resetSelected();
         });
 	
-	
 	resetCamera(); //Reset camera to move the graph a little to the right	
 	s.refresh();
 

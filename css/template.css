@@ -44,7 +44,7 @@ border-bottom-style: dotted;
 }
 
 #status_container{
-	margin-top: 50px;
+	margin-top: 30px;
 }
 
 #status{
@@ -112,7 +112,10 @@ margin-top:30px;
 margin-top:20px;
 margin-bottom:10px;
 }
-
+#embed{
+	opacity: 0;
+  margin-top: 2px;
+}
 /*body { 
     background: #eee;
     font-family: "lucida grande", tahoma, verdana, arial, sans-serif;

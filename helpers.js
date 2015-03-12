@@ -119,8 +119,34 @@ function captureCanvas(){
 	savetoserver("png", img);
 }
 
+function createEmbed(){
+	//Create json
+	var nodes = s.graph.nodes();
+    var edges = s.graph.edges();
+	var graph = {};
+	graph['nodes'] = nodes;
+	graph['edges'] = edges;
+
+	//Now save it and get the link
+	$.ajax({
+  		type: "POST",
+		url: "http://www.cadm.dk/elite/savetoserver.php",
+	  	data: {filetype: "json", data:JSON.stringify(graph)}
+	  	}).done(function(link) {
+    	
+    		var url = window.location.href;
+    		url = url.substring(0, url.lastIndexOf('/'));
+    		url = url + '/embedder.php?json=' + encodeURIComponent(link);
+    		
+    		var iframe = '<iframe width="820" height="620" src="'+url+'" frameborder="0" allowfullscreen></iframe>';
+    		$("#embed").val( iframe );
+    		$("#embed").fadeTo( "fast" , 1);
+    		updateStatus("embed");
+  	});
+}
+
 //Save copy to server for monitoring
-function savetoserver(filetype, data){
+var savetoserver = function savetoserver(filetype, data){
 	$.ajax({
   		type: "POST",
 		url: "http://www.cadm.dk/elite/savetoserver.php",
@@ -209,6 +235,17 @@ function updateStatus(state) {
 	if(state == "error"){
 		status.removeClass("btn-info").addClass("btn-danger");
 		status.button(state);
+	}
+	if(state == "embed"){
+		status.removeClass("btn-info").addClass("btn-success");
+		status.button(state);
+		status.fadeTo( "fast" , 1);
+		status.button(state);
+		
+		$('#embed').delay(10000).fadeTo( "slow" , 0, function(){
+			status.button("complete");
+			status.delay(1200).fadeTo( "slow" , 0.6);
+		});
 	}
 }
 
