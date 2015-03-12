@@ -1,6 +1,16 @@
 // Update status message (for debugging)
-function updateStatus(message) {
-    $("#status").html(message);
+function updateStatus(state) {
+	var status = $('#status');
+
+	if(state == "complete"){
+		status.removeClass("btn-info").addClass("btn-success");
+		status.button(state);
+		status.delay(1200).fadeTo( "slow" , 0.6)
+	}
+	if(state == "error"){
+		status.removeClass("btn-info").addClass("btn-danger");
+		status.button(state);
+	}
 }
 
 function getIntersection(arrays){
@@ -266,11 +276,12 @@ function drawGraph() {
 	selects_values["color_by"] = get_attributes("color_by", false);
 	selects_values["compare_by"] = get_attributes("compare_by", false);
 	selects_values["merge_by"] = get_attributes("merge_by", false);
+	selects_values["size_by"] = addSize("size_by", false);
 	
 	//Initiate search tab
 	$('#menu a:last').tab('show');
 	
-	updateStatus("Database indlæst.");
+	updateStatus("complete");
     });
 	
 }
@@ -374,6 +385,30 @@ function getIds(gephiCol, selector, keepNeighbors, nodes){
 		});
 	}
 	return Ids
+}
+
+function addSize(by){
+	var buttons = window.ini[by];
+	console.log(buttons);
+	buttons.forEach(function(button){
+		$("#size_by_container").append('<label for="'+button+'" class="radio-inline"><input type="radio" name="nodesizeOptions" id="'+button+'" value="'+button+'">'+button+'</label>');
+	});
+	
+	$("#size_by_container").append('<p class="text-info">The layout is usually cleaner when most connected nodes are bigger. The degree is the number of links, the indegree (outdegree) is the number of inbound links (outbound). </p>');
+	/*<p class="title"><strong>Node size - TODO MAKE IT DYNAMIC!</strong></p>
+    					<div role="form">
+        					<label class="radio-inline">
+          					<input type="radio" name="nodesizeOptions" id="nodesize_original" data-app-basemap-layout-nodesize="original" value="original">original</label>
+	        				<label class="radio-inline"><input type="radio" name="nodesizeOptions" id="nodesize_degree" data-app-basemap-layout-nodesize="degree" value="degree" checked="checked">degree</label>
+    	    				<label class="radio-inline"><input type="radio" name="nodesizeOptions" id="nodesize_indegree" data-app-basemap-layout-nodesize="indegree" value="indegree">indegree</label><label class="radio-inline">
+        	  				<input type="radio" name="nodesizeOptions" id="nodesize_outdegree" data-app-basemap-layout-nodesize="outdegree" value="outdegree">outdegree</label>
+      					</div>
+    					
+  	*/
+	
+	var id = $("#size_by_container").parent().attr('id');
+	console.log(id);
+	$("#"+id+"_menu").show();
 }
 
 //Populate navigation based on _by

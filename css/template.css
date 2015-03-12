@@ -53,7 +53,7 @@ word-spacing: -10px;
 .tab-content{
 padding-top:20px;
 }
-.tab-content label{
+#filter_by_container label{
 display: block;
 }
 
@@ -78,6 +78,22 @@ margin:auto;
 }
 .page-header{
 border-bottom:0 !important;
+}
+
+#status_container{
+margin-top: 50px;
+right: 35px;
+}
+#status{
+text-align:left;
+cursor: default;
+}
+
+#size_by_container label{
+min-width:100px;
+}
+#size_by_container label:first-child{
+ margin-left: 10px;
 }
 /*body { 
     background: #eee;

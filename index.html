@@ -60,6 +60,7 @@
 
     //Load data
     $(document).ready(function() {
+    	$('#status').button('loading'); //Set loading sign
     	//Graph changer
     	$( "#dialog" ).dialog({
       		modal: true,
@@ -98,7 +99,6 @@
 				$('#menu li').each(function (){
   					$(this).hide();
 				});	
-
 	    		
    	 		})
         	.fail(function(failure) {
@@ -116,11 +116,15 @@
 	<div id="container">
 		<!-- Header row-->
 		<div class="row">
-			<div class="page-header col-md-12">
+			<div class="page-header col-md-10">
 				<h1>
 				<span id="titel"></span>
 				<small><a id="graph_changer" href="#"></a><span class="glyphicon glyphicon-book"></span></small>
 				</h1>
+			</div>
+			
+			<div id="status_container" class="col-md-2">
+				<button type="button" id="status" data-loading-text="Loading Search engine..." data-complete-text="finished!" data-error-text="The system encountered an error" class="btn btn-info btn-block" autocomplete="off"></button>
 			</div>
 			<div id="dialog" title="Select graph">
   				<p>Please chose basic graph to navigate:</p>
@@ -169,20 +173,8 @@
 			</div>
 			<div id="reset" class=""></div>
 			<div id="details_view" class="col-md-2 well"></div>
-			<div id="status" class="col-md-2 well">Waiting for Search engine to load...</div>
+			
         </div>
 	</div>
 </body>
 </html>
-
-
-<!--<p class="title"><strong>Node size - TODO MAKE IT DYNAMIC!</strong></p>
-    					<div role="form">
-        					<label class="radio-inline">
-          					<input type="radio" name="nodesizeOptions" id="nodesize_original" data-app-basemap-layout-nodesize="original" value="original">original</label>
-	        				<label class="radio-inline"><input type="radio" name="nodesizeOptions" id="nodesize_degree" data-app-basemap-layout-nodesize="degree" value="degree" checked="checked">degree</label>
-    	    				<label class="radio-inline"><input type="radio" name="nodesizeOptions" id="nodesize_indegree" data-app-basemap-layout-nodesize="indegree" value="indegree">indegree</label><label class="radio-inline">
-        	  				<input type="radio" name="nodesizeOptions" id="nodesize_outdegree" data-app-basemap-layout-nodesize="outdegree" value="outdegree">outdegree</label>
-      					</div>
-    					<p class="text-info">The layout is usually cleaner when most connected nodes are bigger. The degree is the number of links, the indegree (outdegree) is the number of inbound links (outbound). </p>
-  -->
