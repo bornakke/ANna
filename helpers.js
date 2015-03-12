@@ -1,7 +1,11 @@
 //Get CanvasSize, called when window is resized
 function calCanvassize(){
-    var height = $('#sigma-container').height();
+	//Get height from window and width from sigma container
+	var height = $( window ).height()-200;
+    $("#sigma-container").height(height);
     var width = $('#sigma-container').width();
+   	
+   	//Calculate margin
    	var marginWidth = width-(width*4/10); //remove 30%
    	var marginHeight = height-(height*2/10); //remove 20%
    	
@@ -99,10 +103,11 @@ function captureSVG(){
 //Capture canvas to png. Only works with canvas render.
 function captureCanvas(){
 	var canvases = $('#sigma-container').children();
-	var ctx0 = canvases[0].getContext('2d');
-	var ctx1 = canvases[1].getContext('2d');
-	ctx0.drawImage(canvases[1], 0, 0);
-	var img    = canvases[0].toDataURL();
+	console.log(canvases);
+	var ctx0 = canvases[3].getContext('2d');
+	var ctx1 = canvases[4].getContext('2d');
+	ctx0.drawImage(canvases[4], 0, 0);
+	var img    = canvases[3].toDataURL();
 	var html = '<img src="'+img+'"/>';
 
 	var height = window.canvasSize.height+50;

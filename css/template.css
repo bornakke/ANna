@@ -1,9 +1,8 @@
 #sigma-container {
-height: 500px;
-background: #f2f0e9;
+	background: #f2f0e9;
     border: 1px solid #ccc;
     border-radius: 3px;
-width: 99%;
+	width: 99%;
 }
 
 #menu{
@@ -19,9 +18,12 @@ border-bottom-style: dotted;
 	z-index: 10;
 	background: #fff;
 	min-height:400px;
+	min-width: 300px;
+	max-width: 400px;
 }
 
 #details_view{
+	z-index: 10;
 	position:absolute;
 	left:40px;
 	background: #fff;
@@ -30,31 +32,26 @@ border-bottom-style: dotted;
 	display:none;
 }
 
-#resetcamera{
+.leftButtons{
+	z-index: 10;
 	position: absolute;
-	left:20px;
+	margin-left:20px;
 	margin-top:20px;
+}
+
+.leftButtons div{
+	margin-bottom:5px;
 }
 
 #status_container{
 	margin-top: 50px;
-	right: 35px;
 }
 
 #status{
 	text-align:left;
 	cursor: default;
 }
-#savetoSVG{
-	position: absolute;
-	left:40px;
-	margin-top:55px;
-}
-#savetoCanvas{
-	position: absolute;
-	left:40px;
-	margin-top:95px;
-}
+
 .btn-default:focus {
     color: #333;
     background-color: #ebebeb;
@@ -110,6 +107,12 @@ min-width:100px;
 .text-info{
 margin-top:30px;
 }
+
+.row .page-header{
+margin-top:20px;
+margin-bottom:10px;
+}
+
 /*body { 
     background: #eee;
     font-family: "lucida grande", tahoma, verdana, arial, sans-serif;
