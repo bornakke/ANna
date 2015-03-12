@@ -23,8 +23,7 @@ function getIntersection(arrays){
 	return result;
 }
 
-function getUrlParameter(sParam)
-{
+function getUrlParameter(sParam){
     var getVar = window.location.hash;
     if(getVar == ""){
     	getVar = location.search;
@@ -50,19 +49,19 @@ function getUrlParameter(sParam)
   //https://github.com/jacomyal/sigma.js/wiki/Graph-API
   /* Apply a size to node relative to their degree. */
   function degreeSize(option) {
-    return function(node) {
+    return function(n) {
       if (option === 'original')
-        node.size = node.original.size;
+        n.size = n.orgSize
       else if (option === 'degree')
-        node.size = 1 + 2 * Math.sqrt(this.graph.degree(node.id));
+        n.size = 1 + 2 * Math.sqrt(s.graph.degree(n.id));
       else if (option === 'indegree')
-        node.size = 1 + 2 * Math.sqrt(this.graph.degree(node.id, 'in'));
-      else
-        node.size = 1 + 2 * Math.sqrt(this.graph.degree(node.id, 'out'));
+        n.size = 1 + 2 * Math.sqrt(s.graph.degree(n.id, 'in'));
+      else if (option === 'outdegree')
+        n.size = 1 + 2 * Math.sqrt(s.graph.degree(n.id, 'out'));
     };
   }
 
-function drawSelectgraph(full_ini){
+function selectGraph(full_ini){
 	Object.keys(full_ini).forEach(function(key){
 		if(key != "globalsettings"){
 			$("#graphs").append('<div class="'+ key +' basicgraph" ><a id="'+key+'" href="#"><h4>'+full_ini[key].graph_header+'</h4><img src="'+full_ini[key].logo_url+'" class="logo"/></a></div>');
@@ -276,7 +275,7 @@ function drawGraph() {
 	selects_values["color_by"] = get_attributes("color_by", false);
 	selects_values["compare_by"] = get_attributes("compare_by", false);
 	selects_values["merge_by"] = get_attributes("merge_by", false);
-	selects_values["size_by"] = addSize("size_by", false);
+	selects_values["size_by"] = createRadio("size_by", false);
 	
 	//Initiate search tab
 	$('#menu a:last').tab('show');
@@ -327,7 +326,7 @@ function get_attributes(by, multi){
 				//Prepare the list for population by sorting the list
 				select_values[_by.gephiCol[i]] = select_values[_by.gephiCol[i]].sort(); 
 				select_values[_by.gephiCol[i]] = _.uniq(select_values[_by.gephiCol[i]], true); //...And removing all duplicates 
-				create_select(by, _by, select_values[_by.gephiCol[i]], i, multi);
+				createSelect(by, _by, select_values[_by.gephiCol[i]], i, multi);
 			}
 			else{ //Color_by, comapare_by Needs another simple setup. No need to run through all nodes. 
 				if(!(by in select_values)){
@@ -338,7 +337,7 @@ function get_attributes(by, multi){
 
 		}
 		if(!multi){ //Create selector when all is ready 
-			create_select(by, _by, select_values[by], 0, false);
+			createSelect(by, _by, select_values[by], 0, false);
 		}
 	}
 	return select_values;
@@ -387,32 +386,26 @@ function getIds(gephiCol, selector, keepNeighbors, nodes){
 	return Ids
 }
 
-function addSize(by){
+function createRadio(by){
 	var buttons = window.ini[by];
-	console.log(buttons);
 	buttons.forEach(function(button){
-		$("#size_by_container").append('<label for="'+button+'" class="radio-inline"><input type="radio" name="nodesizeOptions" id="'+button+'" value="'+button+'">'+button+'</label>');
+		$("#size_by_container").append('<label for="'+button+'" class="radio-inline"><input type="radio" name="nodesizeOptions" id="'+button+'" value="'+button+'">'+button.replace(/\b[a-z]/g, function(letter) {
+    return letter.toUpperCase(); })+'</label>');
 	});
-	
 	$("#size_by_container").append('<p class="text-info">The layout is usually cleaner when most connected nodes are bigger. The degree is the number of links, the indegree (outdegree) is the number of inbound links (outbound). </p>');
-	/*<p class="title"><strong>Node size - TODO MAKE IT DYNAMIC!</strong></p>
-    					<div role="form">
-        					<label class="radio-inline">
-          					<input type="radio" name="nodesizeOptions" id="nodesize_original" data-app-basemap-layout-nodesize="original" value="original">original</label>
-	        				<label class="radio-inline"><input type="radio" name="nodesizeOptions" id="nodesize_degree" data-app-basemap-layout-nodesize="degree" value="degree" checked="checked">degree</label>
-    	    				<label class="radio-inline"><input type="radio" name="nodesizeOptions" id="nodesize_indegree" data-app-basemap-layout-nodesize="indegree" value="indegree">indegree</label><label class="radio-inline">
-        	  				<input type="radio" name="nodesizeOptions" id="nodesize_outdegree" data-app-basemap-layout-nodesize="outdegree" value="outdegree">outdegree</label>
-      					</div>
-    					
-  	*/
 	
+	//When selecting options, automatically perform search
+	$("#size_by_container").on('change', function(event, params) {
+    		performSearch();
+    });
+	
+	//Show menu
 	var id = $("#size_by_container").parent().attr('id');
-	console.log(id);
 	$("#"+id+"_menu").show();
 }
 
 //Populate navigation based on _by
-function create_select(by, _by, select_value, i, multi){ 
+function createSelect(by, _by, select_value, i, multi){ 
 	if(multi){
 		$("#"+by+"_container").append('<label for="'+by+'_'+_by.gephiCol[i]+'">'+_by.label[i]+'</label><select id="'+by+'_'+_by.gephiCol[i]+'" class="chosen-select" multiple="'+ multi +'">');
 		
@@ -456,7 +449,7 @@ function performSearch() {
 	//Filtering is the most radical so this will go first. Based on this you can then highlight_by, but we suggests the users to only 
 	//Inside these two selectors you can then run color_by, compare_by, merge_by in this track 
 	//Inside boxes is AND and between boxes is OR 
-		
+	
 	//Reset view so that we know what we got
 	resetView();
 	
@@ -488,6 +481,16 @@ function performSearch() {
 				}
 			});
 			keepNodes = keepNodes_tmp; //Construct a new keepNodes
+		}
+	}
+	
+	//Size by
+	var gephiCols = window.ini.size_by;
+	if(gephiCols[0] != ""){ //Do we need to size_by? 
+		if(!(_.isEmpty(keepNodes))){ //There are still nodes to resize
+			//var selector = $("#color_by");
+			var value = $('input[name=nodesizeOptions]:checked').val();
+			keepNodes.forEach(degreeSize(value));
 		}
 	}
 	

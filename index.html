@@ -82,7 +82,7 @@
     	
     	$.getJSON( "ini.json")
 	   	 	.done(function(data) {
-    			drawSelectgraph(data);
+    			selectGraph(data);
     			$("#titel").text(data.globalsettings.header);
     			if(window.graph == ""){
 	    			$( '.ui-dialog-titlebar-close')[0].style.display = 'none';
@@ -124,7 +124,7 @@
 			</div>
 			
 			<div id="status_container" class="col-md-2">
-				<button type="button" id="status" data-loading-text="Loading Search engine..." data-complete-text="finished!" data-error-text="The system encountered an error" class="btn btn-info btn-block" autocomplete="off"></button>
+				<button type="button" id="status" data-loading-text="Loading Search engine..." data-complete-text="Network loaded." data-error-text="The system encountered an error" class="btn btn-info btn-block" autocomplete="off"></button>
 			</div>
 			<div id="dialog" title="Select graph">
   				<p>Please chose basic graph to navigate:</p>
