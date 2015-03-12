@@ -31,10 +31,29 @@ border-bottom-style: dotted;
 }
 
 #resetcamera{
-position: absolute;
-left:20px;
-margin-top:20px;
+	position: absolute;
+	left:20px;
+	margin-top:20px;
+}
 
+#status_container{
+	margin-top: 50px;
+	right: 35px;
+}
+
+#status{
+	text-align:left;
+	cursor: default;
+}
+#savetoSVG{
+	position: absolute;
+	left:40px;
+	margin-top:55px;
+}
+#savetoCanvas{
+	position: absolute;
+	left:40px;
+	margin-top:95px;
 }
 .btn-default:focus {
     color: #333;
@@ -80,20 +99,16 @@ margin:auto;
 border-bottom:0 !important;
 }
 
-#status_container{
-margin-top: 50px;
-right: 35px;
-}
-#status{
-text-align:left;
-cursor: default;
-}
 
 #size_by_container label{
 min-width:100px;
 }
 #size_by_container label:first-child{
  margin-left: 10px;
+}
+
+.text-info{
+margin-top:30px;
 }
 /*body { 
     background: #eee;

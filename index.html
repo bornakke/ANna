@@ -13,8 +13,7 @@
     <script type="text/javascript" src="js/sigma.parsers.gexf.min.js"></script>
 	<script type="text/javascript" src="js/sigma.canvas.renders.js"></script>
 	<script type="text/javascript" src="js/sigma.layout.forceAtlas2.min.js"></script>
-
-	
+	<script type="text/javascript" src="js/sigma.exporters.svg.js"></script>	
    
     <!-- For various purposes -->
     <script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
@@ -34,7 +33,6 @@
     <!-- Global state -->
     <script type="text/javascript">
     window.graph = getUrlParameter("graph");
-    window.canvasSize = { width: 802, height: 502 }; //Should follow the hardcoded css value. But it doesn't??
     
     var multi_config = {
         search_contains: true,
@@ -100,6 +98,13 @@
   					$(this).hide();
 				});	
 	    		
+	    		//Create canvasSize object
+	    		calCanvassize();
+	    		//Listen for resize
+			 	var myEfficientFn = _.debounce(function() {
+			 		calCanvassize(); 
+			 	}, 250);
+				window.addEventListener('resize', myEfficientFn);
    	 		})
         	.fail(function(failure) {
                   console.log("Error when loading json file");
@@ -107,8 +112,8 @@
             });
     	
     });  
-    
-    
+
+	
     
     </script>
 </head>
@@ -171,9 +176,18 @@
   					<span class="glyphicon glyphicon-repeat" aria-hidden="true"></span> reset view
 				</button>
 			</div>
-			<div id="reset" class=""></div>
+			<div id="savetoSVG" class="col.md-1">
+				<button type="button" class="btn btn-default" aria-label="Save to SVG" onclick="captureSVG(); this.blur();">
+  					<span class="glyphicon glyphicon-save" aria-hidden="true"></span> Capture SVG
+				</button>
+			</div>
+			<div id="savetoCanvas" class="col.md-1">
+				<button type="button" class="btn btn-default" aria-label="Save to Canvas" onclick="captureCanvas(); this.blur();">
+  					<span class="glyphicon glyphicon-save" aria-hidden="true"></span> Capture Canvas
+				</button>
+			</div>
 			<div id="details_view" class="col-md-2 well"></div>
-			
+					
         </div>
 	</div>
 </body>

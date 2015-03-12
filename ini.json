@@ -19,6 +19,11 @@
 				"gephiCol": ["location", "from_user_timezone"],
 				"keepNeighbors": [true, false]
 				},
+	"highlight_by2": {
+				"label": "Location",
+				"gephiCol": ["location", "from_user_timezone"],
+				"keepNeighbors": true
+				},
 	"color_by": {
 				"label": "Color by",
 				"gephiCol": ["parti", "type"]

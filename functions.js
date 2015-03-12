@@ -1,26 +1,44 @@
-// Update status message (for debugging)
-function updateStatus(state) {
-	var status = $('#status');
-
-	if(state == "complete"){
-		status.removeClass("btn-info").addClass("btn-success");
-		status.button(state);
-		status.delay(1200).fadeTo( "slow" , 0.6)
+function getIds(gephiCol, selector, keepNeighbors, nodes){
+	var Ids = [];
+	var values = selector.val();
+	
+	if(!(_.isArray(values))){ //When dealing with single select there is only one value and therefore no array.
+		var values = [values];
 	}
-	if(state == "error"){
-		status.removeClass("btn-info").addClass("btn-danger");
-		status.button(state);
-	}
-}
+	values = values.map(function(value){ //Take care of numbers in selector
+		if(isNaN(parseInt(value))){ return value;}
+		else{	return parseInt(value); }
+	});
 
-function getIntersection(arrays){
-	var result = arrays.shift().reduce(function(res, v) {
-    if (res.indexOf(v) === -1 && arrays.every(function(a) {
-        return a.indexOf(v) !== -1;
-    })) res.push(v);
-    return res;
-	}, []);
-	return result;
+	if(values[0] != null){ //Only continue if we actually applied this filter
+		console.log(values);
+		nodes.forEach(function(n) {
+			if(!_.isUndefined(n.attributes[gephiCol])){ //Make sure that the node has a value
+					//console.log(n.attributes[gephiCol]);
+					//console.log(values);
+				if(($.inArray(n.attributes[gephiCol], values )) > -1){
+					
+  					Ids.push(n.id);	
+ 	 				if(keepNeighbors == true){ //Check if we should keepNeighbors and add them to the list
+  						Object.keys(s.graph.neighbors(n.id)).forEach(function(neighbor){
+  							Ids.push(neighbor);
+  						});
+  					}
+  				}
+  			}
+  			else if(gephiCol == "id" || gephiCol == "label") { //Special case
+  				if(($.inArray(n[gephiCol], values )) > -1){
+  					Ids.push(n.id);
+  					if(keepNeighbors == true){
+  						Object.keys(s.graph.neighbors(n.id)).forEach(function(neighbor){
+  							Ids.push(neighbor);
+  						});
+  					}
+  				}
+  			}
+		});
+	}
+	return Ids
 }
 
 function getUrlParameter(sParam){
@@ -45,10 +63,10 @@ function getUrlParameter(sParam){
         }
     }
 }   
-  
-  //https://github.com/jacomyal/sigma.js/wiki/Graph-API
-  /* Apply a size to node relative to their degree. */
-  function degreeSize(option) {
+
+//https://github.com/jacomyal/sigma.js/wiki/Graph-API
+/* Apply a size to node relative to their degree. */
+function degreeSize(option) {
     return function(n) {
       if (option === 'original')
         n.size = n.orgSize
@@ -59,7 +77,70 @@ function getUrlParameter(sParam){
       else if (option === 'outdegree')
         n.size = 1 + 2 * Math.sqrt(s.graph.degree(n.id, 'out'));
     };
-  }
+}
+
+/*function edgeWeight(option) {
+    return function(e) {
+      if (option === 'original')
+        e.size = e.orgSize
+      else if (option === 'sum')
+        e.size = 1 + 2 * Math.sqrt(s.graph.degree(e.id));
+      else if (option === 'inversesum')
+        e.size = 1 + 2 * Math.sqrt(s.graph.degree(e.id, 'in'));
+      else if (option === 'outdegree')
+        e.size = 1 + 2 * Math.sqrt(s.graph.degree(e.id, 'out'));
+    };
+}*/
+
+function calCanvassize(){
+    var height = $('#sigma-container').height();
+    var width = $('#sigma-container').width();
+   	var marginWidth = width-(width*4/10); //remove 30%
+   	var marginHeight = height-(height*2/10); //remove 20%
+   	
+   	//In big screens we have layout in right side so we should have less width
+   	if($( window ).width() >= 1000){
+	    var extramarginWidth = width-(width*1/4);
+	    cameraX = 200;	
+    }
+    else{
+	   var extramarginWidth = marginWidth;
+	   cameraX = 0;
+    }
+    	
+    window.canvasSize = { 
+    	width: width, 
+    	height: height,
+    	marginHeight: marginHeight, 
+    	marginWidth: marginWidth,
+    	extramarginWidth: extramarginWidth,
+    	cameraX: cameraX   				
+    };
+    console.log(window.canvasSize);
+}
+
+function captureSVG(){
+	var svg = s.toSVG({
+		labels: true,
+  		classes: false,
+  		data: true,
+  		download: true
+  		/*filename: 'hello.svg'*/
+	});
+}
+function captureCanvas(){
+	var canvases = $('#sigma-container').children();
+	var ctx0 = canvases[0].getContext('2d');
+	var ctx1 = canvases[1].getContext('2d');
+	ctx0.drawImage(canvases[1], 0, 0);
+	var img    = canvases[0].toDataURL();
+	var html = '<img src="'+img+'"/>';
+	
+	//var popupWindow = window.open("","","menubar=0,scrollbars=0,height="+window.canvasSize.height+",width="+window.canvasSize.width+"");
+	var popupWindow = window.open("","","menubar=0,scrollbars=0,height="+window.canvasSize.height+",width="+window.canvasSize.width+"");
+	popupWindow.document.write(html);
+	popupWindow.document.close();
+}
 
 function selectGraph(full_ini){
 	Object.keys(full_ini).forEach(function(key){
@@ -81,7 +162,7 @@ function resetCamera(){
 	var camera = s.camera;
     sigma.misc.animation.camera(
       camera,
-      {x: 200, y: 0, angle: 0, ratio: 1},
+      {x: window.canvasSize.cameraX, y: 0, angle: 0, ratio: 1},
       {duration: 150}
     );
 }
@@ -92,8 +173,10 @@ function unclickNode(){
 	//hide details view:
 	$("#details_view").hide();
 	s.graph.nodes().forEach(function(n) {
-		n.type = "def";
-		n.color = n.originalColor;
+		if(n.type == "highlight"){
+			n.type = "def";
+			n.color = n.originalColor;
+		}
 	});
 	s.refresh();
 }
@@ -108,6 +191,7 @@ function resetView(){
             e.color = e.originalColor;
         }
     });
+
     //Then show all nodes and remove onlylabel node + merge_by nodes
 	s.graph.nodes().forEach(function(n) {
   		if(n.type == "onlylabel" || n.type == "merge_by"){
@@ -191,7 +275,16 @@ function fillDetails(node, neighbors){
 function drawGraph() {
     ////////////////////////////////////////////////////////////////////////
 	//Gloablly define sigma instance
-	window.s = new sigma('sigma-container', {settings: {}});
+	window.s = new sigma({ 
+		renderers: [
+   	 		{
+      		container: 'sigma-container',
+      		type: 'canvas' // force it to canvas so that we can get a screenshot. Disable line to go back to webGL
+      		}
+  		],
+  		settings: {}
+  	});
+  	
 	//Parse data
     sigma.parsers.gexf(window.ini.basemap, function(graph) {
 		
@@ -260,10 +353,12 @@ function drawGraph() {
 		////////////////////////////////////////////////////////////////////////
         // When the stage is clicked, we just color each
         // node and edge with its original color.
+        //TODO: Extend this to anywhere you click.
         s.bind('clickStage', function(e) {
             unclickNode();
         });
-		
+	
+	
 	resetCamera(); //Reset camera to move the graph a little to the right	
 	s.refresh();
 
@@ -343,54 +438,14 @@ function get_attributes(by, multi){
 	return select_values;
 }
 
-function getIds(gephiCol, selector, keepNeighbors, nodes){
-	var Ids = [];
-	var values = selector.val();
-	
-	if(!(_.isArray(values))){ //When dealing with single select there is only one value and therefore no array.
-		var values = [values];
-	}
-	values = values.map(function(value){ //Take care of numbers in selector
-		if(isNaN(parseInt(value))){ return value;}
-		else{	return parseInt(value); }
-	});
-
-	if(values[0] != null){ //Only continue if we actually applied this filter
-		console.log(values);
-		nodes.forEach(function(n) {
-			if(!_.isUndefined(n.attributes[gephiCol])){ //Make sure that the node has a value
-					//console.log(n.attributes[gephiCol]);
-					//console.log(values);
-				if(($.inArray(n.attributes[gephiCol], values )) > -1){
-					
-  					Ids.push(n.id);	
- 	 				if(keepNeighbors == true){ //Check if we should keepNeighbors and add them to the list
-  						Object.keys(s.graph.neighbors(n.id)).forEach(function(neighbor){
-  							Ids.push(neighbor);
-  						});
-  					}
-  				}
-  			}
-  			else if(gephiCol == "id" || gephiCol == "label") { //Special case
-  				if(($.inArray(n[gephiCol], values )) > -1){
-  					Ids.push(n.id);
-  					if(keepNeighbors == true){
-  						Object.keys(s.graph.neighbors(n.id)).forEach(function(neighbor){
-  							Ids.push(neighbor);
-  						});
-  					}
-  				}
-  			}
-		});
-	}
-	return Ids
-}
-
 function createRadio(by){
+	var firstLetter = function(str) {
+		return str.replace(/\b[a-z]/g, function(letter){ return letter.toUpperCase(); });
+	}
+	
 	var buttons = window.ini[by];
 	buttons.forEach(function(button){
-		$("#size_by_container").append('<label for="'+button+'" class="radio-inline"><input type="radio" name="nodesizeOptions" id="'+button+'" value="'+button+'">'+button.replace(/\b[a-z]/g, function(letter) {
-    return letter.toUpperCase(); })+'</label>');
+		$("#size_by_container").append('<label for="'+button+'" class="radio-inline"><input type="radio" name="nodesizeOptions" id="'+button+'" value="'+button+'">'+firstLetter(button)+'</label>');
 	});
 	$("#size_by_container").append('<p class="text-info">The layout is usually cleaner when most connected nodes are bigger. The degree is the number of links, the indegree (outdegree) is the number of inbound links (outbound). </p>');
 	
@@ -608,6 +663,7 @@ function performSearch() {
 			});
 		}
 		if(!(_.isEmpty(highlights_Ids))){ //only run this if we did a highlight 
+			console.log(highlights_Ids);
 			//Todo: Different coloros for different places?
 			var keepIds = _.flatten(highlights_Ids); //We should not get intersection with highlighting since that would be wierd //getIntersection(highlights_Ids);
 			//Now color everything that has not been filtered and save the nodes
@@ -631,11 +687,11 @@ function performSearch() {
 			
 				var xPostions = {};
 				var yPostions = {};
-				var margin = 40; 
-				var canvasXStart = -window.canvasSize.width/2+margin;
-				var spreadingX = (window.canvasSize.width-margin*2)/unique_attributes.length;
+				var margin = 100; 
+				var canvasXStart = -window.canvasSize.marginWidth/2;
+				var spreadingX = window.canvasSize.extramarginWidth/unique_attributes.length;
 
-				var canvasYStart = window.canvasSize.height/2-margin;
+				var canvasYStart = window.canvasSize.marginHeight/2;
 				var spreadingY = -10;
 
 				for(var i = 0; i < unique_attributes.length; i++) {

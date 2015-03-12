@@ -42,4 +42,5 @@ We turn on interaction with the graph by making filling out the the arrays:
 
 
 ##Troubleshouting
-JSON files can be very sensitive to type errors and alike. If no graph is showing then try to copy/paste the content of ini.json to json lint (http://jsonlint.com/) to validate the file.
+- JSON files can be very sensitive to type errors and alike. If no graph is showing then try to copy/paste the content of ini.json to json lint (http://jsonlint.com/) to validate the file.
+- Please check that all fields except label fields is lowercased in the ini.json file.  

@@ -10,7 +10,6 @@ sigma.webgl.nodes.onlylabel = {addNode: function() {}, render: function() {}, in
    */
   sigma.canvas.nodes.highlight = function(node, context, settings) {
     var prefix = settings('prefix') || '';
-
 	  context.strokeStyle = '#FFFF00';
       context.lineWidth = 1;
       context.shadowColor = '#FFFF00';
