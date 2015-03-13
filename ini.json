@@ -1,7 +1,12 @@
 {
  "globalsettings":
  	{
- 	"header": "ANna v0.4"
+ 	"header": "ANna v0.4",
+ 	"captures": {
+ 			"savetoSVG": true,
+ 			"savetoCanvas": true,
+ 			"embedSigma": true
+ 			}
  	},
  "graph1":
 	{
@@ -15,14 +20,9 @@
 				"keepNeighbors": [true, true, false]
 				},
 	"highlight_by": {
-				"label": ["Location", "Timezone"],
-				"gephiCol": ["location", "from_user_timezone"],
-				"keepNeighbors": [true, false]
-				},
-	"highlight_by2": {
-				"label": "Location",
-				"gephiCol": ["location", "from_user_timezone"],
-				"keepNeighbors": true
+				"label": ["Location", "Timezone", "Name"],
+				"gephiCol": ["location", "from_user_timezone", "label"],
+				"keepNeighbors": [true, true, true]
 				},
 	"color_by": {
 				"label": "Color by",

@@ -1,5 +1,6 @@
 sigma.canvas.nodes.onlylabel = function() { };
 sigma.webgl.nodes.onlylabel = {addNode: function() {}, render: function() {}, initProgram: function(){}};
+//sigma.webgl.nodes.highlight =  sigma.canvas.nodes.highlight;
 
 /**
    * Override the default node renderer. It renders the node as a simple disc.
@@ -10,17 +11,12 @@ sigma.webgl.nodes.onlylabel = {addNode: function() {}, render: function() {}, in
    */
   sigma.canvas.nodes.highlight = function(node, context, settings) {
     var prefix = settings('prefix') || '';
-	  context.strokeStyle = '#FFFF00';
-      context.lineWidth = 1;
-      context.shadowColor = '#FFFF00';
-      context.shadowBlur = 50;
-      context.shadowOffsetX = 0;
-      context.shadowOffsetY = 0;
-      context.stroke();
+    
+    context.fillStyle = '#FFFFFF'
+    context.shadowColor = '#FFFF00';
+    context.shadowBlur = node[prefix + 'size']*2;
 
-
-    context.fillStyle = node.color || settings('defaultNodeColor');
-    context.beginPath();
+    context.beginPath();  
     context.arc(
       node[prefix + 'x'],
       node[prefix + 'y'],
@@ -31,12 +27,12 @@ sigma.webgl.nodes.onlylabel = {addNode: function() {}, render: function() {}, in
     );
 
     context.closePath();
-  
-    
     context.fill();
+	context.stroke();
+    
+    context.shadowBlur = 0;
   };
   
-//sigma.webgl.nodes.highlight = sigma.canvas.nodes.highlight;
  
 sigma.canvas.labels.onlylabel = function(node, context, settings) {
     

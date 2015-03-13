@@ -96,107 +96,193 @@ function drawGraph() {
         // node and edge with its original color.
         //TODO: Extend this to anywhere you click.
         s.bind('clickStage', function(e) {
-            resetSelected();
+            performSearch();
         });
+		    		
+	//Create canvasSize object
+	calCanvassize();
+	    		
+	//Listen for resize
+	var checkSize = _.debounce(function() {
+		calCanvassize(); }, 1000);
+	window.addEventListener('resize', checkSize);
 	
-	resetCamera(); //Reset camera to move the graph a little to the right	
+	//same as resetCamera except no search performed since it is not ready yet.
+	resetCamera();
 	s.refresh();
-
-    //Create and fill select boxes, remember selects_values for later
-	window.selects_values = {};
 	
-	selects_values["filter_by"] = get_attributes("filter_by", true);
-	selects_values["highlight_by"] = get_attributes("highlight_by", true);
-	selects_values["color_by"] = get_attributes("color_by", false);
-	selects_values["compare_by"] = get_attributes("compare_by", false);
-	selects_values["merge_by"] = get_attributes("merge_by", false);
-	selects_values["size_by"] = createRadio("size_by", false);
-	
-	//Initiate search tab
-	$('#menu a:last').tab('show');
+	createInterface();
 	
 	updateStatus("complete");
     });
 	
 }
 
-//Prepare the navigation
-function get_attributes(by, multi){ 
-	//Since we remove spaces before we should also change the window ini
-	window.ini[by].gephiCol.forEach(function(value, i){
-		window.ini[by].gephiCol[i] = value.replace(/ /g,"_");
-	});
+//Meta function for constructing search interface 
+function createInterface(){	
+
+	//Since we remove spaces in the graph we should also change the window ini
+	var filters = ["filter_by", "highlight_by", "color_by", "compare_by", "merge_by"];
+	removeSpaces(filters);
+	
+	//Hide non-activated captures
+	activateCapture();
+	
+	createMultiSelect("filter_by", window.ini["filter_by"]);
+	createGroupedMultiSelect("highlight_by", window.ini["highlight_by"]);
+	createSingleSelect("color_by", window.ini["color_by"]);
+	createSingleSelect("compare_by", window.ini["compare_by"]);
+	createSingleSelect("merge_by", window.ini["merge_by"]);
+	createRadio("size_by");
+	
+	//Initiate search tab
+	$('#menu a:last').tab('show');
+}
+
+//Create single select interfaces
+function createSingleSelect(filterName, filterObject){
+	//Get value for dropdown
+	var selectValues = getDropdown(filterObject);
+	
+	if(selectValues[0] != ""){ //is filter active
+		$("#"+filterName+"_container").append('<label for="'+filterName+'">'+filterObject.label+'</label><select id="'+filterName+'" class="chosen-select">');
 		
-	var select_values = [];
-	var _by = window.ini[by];
+		$("#"+filterName+"").append($('<option/>', { value: "", text: "" })); //Add blank first option to allow deselect
 	
-	//Run through the filters and then through nodes and svae them to the selects_values as
-	//select_values[i][] =  
-	if(_by.gephiCol[0] != ""){ //IS the filter active
-		for (i = 0; i < _by.gephiCol.length; i++) { //Then run through the filters of _by type
-			if(multi){ //Everything but filter/highlight
-				select_values[_by.gephiCol[i]] = new Array(); //Prepare Array
-				s.graph.nodes().forEach(function(n) { //Now run through all node for every filter of _by type
-					if(n.attributes[_by.gephiCol[i]]){ //Is this filter in this node and not udefined				
-						select_values[_by.gephiCol[i]].push(n.attributes[_by.gephiCol[i]]); //Then save it
-					} else if(_by.gephiCol[i] == "id" || _by.gephiCol[i] == "label") {
-						select_values[_by.gephiCol[i]].push(n[_by.gephiCol[i]]); //Then save it
-					}				
-					//Special case: ID or nodes or label is not node attributes
-					else{//Error or at least a tag that are not for everyone. TODO Remove later 
-						//console.log(_by +" is not in this node, or value is udefined");
-					}
-				});
-				//Prepare the list for population by sorting the list
-				select_values[_by.gephiCol[i]] = select_values[_by.gephiCol[i]].sort(); 
-				select_values[_by.gephiCol[i]] = _.uniq(select_values[_by.gephiCol[i]], true); //...And removing all duplicates 
-				createSelect(by, _by, select_values[_by.gephiCol[i]], i, multi);
-			}
-			else{ //Color_by, comapare_by Needs another simple setup. No need to run through all nodes. 
-				if(!(by in select_values)){
-					select_values[by] = []; //Prepare Array
-				}
-				select_values[by].push(_by.gephiCol[i]); //Add the names from the ini file
-			}
-
-		}
-		if(!multi){ //Create selector when all is ready 
-			createSelect(by, _by, select_values[by], 0, false);
-		}
+		//Adding tags to select...
+		selectValues.map(function(value) {
+			$("#"+filterName+"").append($('<option/>', { value: value, text: value }));
+		});
+			
+		//When selecting options, automatically perform search
+		$("#"+filterName+"").on('change', function(event, params) {
+  		  	performSearch();
+    	});
+    
+		$("#"+filterName+"").chosen({
+			search_contains: true,
+    		allow_single_deselect: true,
+        	placeholder_text_single: 'Chose one entity...',
+    		width: '95%'
+		});
+	
+		showMenu(filterName);
 	}
-	return select_values;
 }
 
-//Populate navigation with radiobuttons
-function createRadio(by){
-	var firstLetter = function(str) {
-		return str.replace(/\b[a-z]/g, function(letter){ return letter.toUpperCase(); });
-	}
+//Create multi select interfaces
+function createMultiSelect(filterName, filterObject){ 
+	var selectValues = getSearchterms(filterObject); 
 	
-	var buttons = window.ini[by];
-	buttons.forEach(function(button){
-		$("#size_by_container").append('<label for="'+button+'" class="radio-inline"><input type="radio" name="nodesizeOptions" id="'+button+'" value="'+button+'">'+firstLetter(button)+'</label>');
-	});
-	$("#size_by_container").append('<p class="text-info">The layout is usually cleaner when most connected nodes are bigger. The degree is the number of links, the indegree (outdegree) is the number of inbound links (outbound). </p>');
+	Object.keys(selectValues).forEach(function(gephiCol, i){
+		//console.log(filterName);
+		//console.log(selectValues[filterName]);
 	
-	//When selecting options, automatically perform search
-	$("#size_by_container").on('change', function(event, params) {
-    		performSearch();
-    });
-	
-	//Show menu
-	var id = $("#size_by_container").parent().attr('id');
-	$("#"+id+"_menu").show();
-}
-
-//Populate navigation based on _by
-function createSelect(by, _by, select_value, i, multi){ 
-	if(multi){
-		$("#"+by+"_container").append('<label for="'+by+'_'+_by.gephiCol[i]+'">'+_by.label[i]+'</label><select id="'+by+'_'+_by.gephiCol[i]+'" class="chosen-select" multiple="'+ multi +'">');
+		$("#"+filterName+"_container").append('<div><label for="'+filterName+'_'+gephiCol+'">'+filterObject.label[i]+'</label><select id="'+filterName+'_'+gephiCol+'" class="chosen-select" multiple="true"></div>');
 		
 		//Adding tags to multiselects...
+		selectValues[gephiCol].map(function(value) {
+			$("#"+filterName+'_'+gephiCol).append($('<option/>', { value: value, text: value }));
+		});
+			
+		//When selecting options, automatically perform search
+		$("#"+filterName+'_'+gephiCol).on('change', function(event, params) {
+    		performSearch();
+    	});
+    
+	    $("#"+filterName+'_'+gephiCol).chosen({
+    		search_contains: true,
+        	no_results_text: 'No results found',
+        	placeholder_text_multiple: 'Chose one or more entities...',
+        	width: '95%'
+    	});
+    });
+	
+	showMenu(filterName);
+}
+
+//Create grouped Multi select for e.g. Highlight
+function createGroupedMultiSelect(filterName, filterObject){
+	var selectValues = getSearchterms(filterObject); 
+	
+	//Bug in chosen makes it imposible to assign a class with the value label to the option 
+	if(_.isArray(selectValues['label'])){ 
+		selectValues['labelBug'] = selectValues['label'];
+		delete selectValues.label;
+	};
+	
+	if(selectValues != {}){ //Filter is enabled 	
+		
+		//Create two select boxes to populate
+		$("#"+filterName+"_container").append('<select id="'+filterName+'_category" class="chosen-select">');
+		//$("#"+filterName+"_category").append($('<option/>', { value: "", text: "" })); //Add blank first option to allow deselect
+		
+		$("#"+filterName+"_container").append('<select id="'+filterName+'_terms" class="chosen-select" multiple="true">');
+		
+			
+		//Run through values for all gephiCols and populate select boxes
+		Object.keys(selectValues).forEach(function(gephiCol, i){			
+			//Add value to category selector
+			$("#"+filterName+"_category").append($('<option/>', { value: gephiCol, text: filterObject.label[i] }));
+		
+			//Add value to the term selector.
+			selectValues[gephiCol].map(function(value) {
+				$("#"+filterName+"_terms").append($('<option/>', { value: value, text: value, class: gephiCol }));
+			});
+		});
+		
+		//When selecting category, filter visible terms
+		$("#"+filterName+"_category").on('change', function(event, params) {
+    		var value = $("#"+filterName+"_category").val();
+    		$("#"+filterName+"_terms > option").show().each(function(){
+    			if(!$(this).hasClass(value)){
+    				$(this).hide();
+    			}
+    		});
+    		$("#"+filterName+"_terms > option:selected").removeAttr("selected");
+    		$("#"+filterName+"_terms").trigger("chosen:updated");
+    	});
+		
+		//When selecting terms, automatically perform search
+		$("#"+filterName+"_terms").on('change', function(event, params) {
+    		performSearch();
+    	});
+    	
+    	$("#"+filterName+"_terms").chosen({
+    		search_contains: true,
+        	no_results_text: 'No results found',
+        	placeholder_text_multiple: 'Chose one or more entities...',
+        	width: '95%',
+        	display_disabled_options: false
+    	});
+    	
+    	
+    	$("#"+filterName+"_category").chosen({
+			search_contains: true,
+    		allow_single_deselect: true,
+        	placeholder_text_single: 'Chose one entity...',
+    		width: '50%'
+		});
+		
+		$("#"+filterName+"_category").trigger('change');
+		
+		$("#"+filterName+"_terms").trigger("chosen:updated");
+		$("#"+filterName+"_category").trigger("chosen:updated");
+		
+		showMenu(filterName);
+		
+	}
+}
+
+//Populate Group selector
+function createGroupSelect_old(by, _by, select_value, i){
+	$("#highlight_selector").append('<li><a id=groupSelector_'+_by.gephiCol[i]+' href="#">'+_by.label[i]+'</a></li>');
+	
+	$("#"+by+"_container").append('<label for="'+by+'_'+_by.gephiCol[i]+'">'+_by.label[i]+'</label><select id="'+by+'_'+_by.gephiCol[i]+'" class="chosen-select" multiple="'+ multi +'">');
+
+		//Adding tags to multiselects...
 		select_value.map(function(tag) {
-			$("#"+by+'_'+_by.gephiCol[i]).append($('<option/>', { value: tag, text: tag }));
+			$("#"+by+'_'+_by.gephiCol[i]).append($('<option/>', { value: tag, text: tag, class: _by.gephiCol[i] }));
 		});
 			
 		//When selecting options, automatically perform search
@@ -209,34 +295,62 @@ function createSelect(by, _by, select_value, i, multi){
         	no_results_text: 'No results found',
         	placeholder_text_multiple: 'Chose one or more entities...',
         	width: '95%'
-    	});
-	}
-	else{
-		$("#"+by+"_container").append('<label for="'+by+'">'+_by.label+'</label><select id="'+by+'" class="chosen-select">');
-		
-		//$("#navigation-wrapper").append('<div class="'+ by +'" ><label for="'+by+'">'+_by.label+' ('+ by +')</label><select id="'+by+'" class="chosen-select">');
-		$("#"+by+"").append($('<option/>', { value: "", text: "" })); //Add blank first option to allow deselect
+    });
 	
-		//Adding tags to select...
-		select_value.map(function(tag) {
-			$("#"+by+"").append($('<option/>', { value: tag, text: tag }));
-		});
-			
-		//When selecting options, automatically perform search
-		$("#"+by+"").on('change', function(event, params) {
-    		performSearch();
-    	});
-    
-		$("#"+by+"").chosen({
-			search_contains: true,
-    	    allow_single_deselect: true,
-          	placeholder_text_single: 'Chose one entity...',
-    	  	width: '95%'
-		});
+	$( '#groupSelector_'+_by.gephiCol[i]+'' ).click(function(e) {
+  		e.preventDefault(); //Prevent the link from asking for #
+  		$("#selectHighlight").html(_by.label[i]+'<span class="caret"></span>');
+  		var options = $("."+_by.gephiCol[i]+"");
+  		
+  		$("option[class=" +_by.gephiCol[i]+ "]").hide();
+	});
+	
+}
+
+//Populate navigation with radiobuttons
+function createRadio(by){
+	var firstLetter = function(str) {
+		return str.replace(/\b[a-z]/g, function(letter){ return letter.toUpperCase(); });
 	}
-	//Show the tab
-	var id = $("#"+by+"_container").parent().attr('id');
-	$("#"+id+"_menu").show();
+	
+	var buttons = window.ini[by];
+	buttons.forEach(function(button){
+		$("#"+by+"_container").append('<label for="'+button+'" class="radio-inline"><input type="radio" name="'+by+'_options" id="'+button+'" value="'+button+'">'+firstLetter(button)+'</label>');
+	});
+	$("#"+by+"_container").append('<p class="text-info">The layout is usually cleaner when most connected nodes are bigger. The degree is the number of links, the indegree (outdegree) is the number of inbound links (outbound). </p>');
+	
+	//When selecting options, automatically perform search
+	$("#"+by+"_container").on('change', function(event, params) {
+    		performSearch();
+    });
+	
+	showMenu(by);
+}
+
+//Prepare the navigation
+function getSearchterms(filterObject){ 
+	var selectValues = {};
+	
+	//if(_by.gephiCol[0] != ""){ //IS the filter active Sandsynligvis ligegyldig, da for løkken gerne skulle løse problemet.
+	
+	//Run trough all Gephicol for the filter and then through nodes. Save the filter values in seperate objects for later manipulation
+	for (i = 0; i < filterObject.gephiCol.length; i++) { //Run through the gephiCol of filterObject
+		selectValues[filterObject.gephiCol[i]] = new Array(); //Prepare Array
+		
+		s.graph.nodes().forEach(function(n) { //Now run through all node for every filter of filterObject type
+			if(n.attributes[filterObject.gephiCol[i]]){ //Is this filter in this node and not udefined				
+				selectValues[filterObject.gephiCol[i]].push(n.attributes[filterObject.gephiCol[i]]);
+			} else if(filterObject.gephiCol[i] == "id" || filterObject.gephiCol[i] == "label") {//Special case
+				selectValues[filterObject.gephiCol[i]].push(n[filterObject.gephiCol[i]]);
+			}
+		});
+		
+		//Prepare the list for population by sorting the list
+		selectValues[filterObject.gephiCol[i]] = selectValues[filterObject.gephiCol[i]].sort(); 
+		selectValues[filterObject.gephiCol[i]] = _.uniq(selectValues[filterObject.gephiCol[i]], true); //...And removing all duplicates 
+	}
+	//}
+	return selectValues;
 }
 
 //Get the ID of all nodes that are affected by filter
@@ -244,22 +358,22 @@ function getIds(gephiCol, selector, keepNeighbors, nodes){
 	var Ids = [];
 	var values = selector.val();
 	
-	if(!(_.isArray(values))){ //When dealing with single select there is only one value and therefore no array.
+	if(!(_.isArray(values))) //When dealing with single select there is only one value and therefore no array.
 		var values = [values];
-	}
-	values = values.map(function(value){ //Take care of numbers in selector
-		if(isNaN(parseInt(value))){ return value;}
-		else{	return parseInt(value); }
-	});
-
+		
+	if(gephiCol == "labelBug") //Bug in Chossen
+  			gephiCol = "label";
+	//TODO: Not working, don't know why
+	/*values = values.map(function(value){ //Take care of numbers in selector
+		if(isNaN(parseInt(value))){ return value; }
+		else{	console.log("hej"); console.log(parseInt(value)); 
+		return parseInt(value); }
+	});*/
+	
 	if(values[0] != null){ //Only continue if we actually applied this filter
-		console.log(values);
 		nodes.forEach(function(n) {
 			if(!_.isUndefined(n.attributes[gephiCol])){ //Make sure that the node has a value
-					//console.log(n.attributes[gephiCol]);
-					//console.log(values);
 				if(($.inArray(n.attributes[gephiCol], values )) > -1){
-					
   					Ids.push(n.id);	
  	 				if(keepNeighbors == true){ //Check if we should keepNeighbors and add them to the list
   						Object.keys(s.graph.neighbors(n.id)).forEach(function(neighbor){
@@ -328,7 +442,7 @@ function performSearch() {
 	if(gephiCols[0] != ""){ //Do we need to size_by? 
 		if(!(_.isEmpty(keepNodes))){ //There are still nodes to resize
 			//var selector = $("#color_by");
-			var value = $('input[name=nodesizeOptions]:checked').val();
+			var value = $('input[name=size_by_options]:checked').val();
 			keepNodes.forEach(degreeSize(value));
 		}
 	}
@@ -386,7 +500,6 @@ function performSearch() {
 					for(var i = 0; i < unique_attributes.length; i++) { //Has to split in to so edges can be drawn	
   						to_connect = _.uniq(edges[unique_attributes[i]], false); //...And removing all duplicates			
   						to_connect.forEach(function(node_target){  	
-  							//console.log(node_target);
   							node_target = node_target.replace(/[^A-Z0-9]/ig, "_");						
   							source = unique_attributes[i].replace(/[^A-Z0-9]/ig, "_");
   							s.graph.addEdge({
@@ -438,24 +551,32 @@ function performSearch() {
 	if(gephiCols[0] != ""){ //Do we need to highlight? 
 		if(!(_.isEmpty(keepNodes))){ //There are still nodes to highlight
 			highlights_Ids = new Array();
-			gephiCols.forEach(function(gephiCol, i){
-				var selector = $("#highlight_by_"+gephiCol+"");
+			//gephiCols.forEach(function(gephiCol, i){
+				var gephiCol = $("#highlight_by_category").val();
+				
+				var i = $.inArray(gephiCol, window.ini.highlight_by.gephiCol); //Construct [i] value now that we are not looping
+
+				//Label bug
+				if(gephiCol == "labelBug")
+					i = $.inArray("label", window.ini.highlight_by.gephiCol);				
+				
+				var selector = $("#highlight_by_terms");
 				var Ids = getIds(gephiCol, selector, window.ini.highlight_by.keepNeighbors[i], keepNodes);
 				if(Ids.length > 0){
 					highlights_Ids.push(Ids);
 				}
-			});
+			//});
 		}
 		if(!(_.isEmpty(highlights_Ids))){ //only run this if we did a highlight 
-			console.log(highlights_Ids);
-			//Todo: Different coloros for different places?
-			var keepIds = _.flatten(highlights_Ids); //We should not get intersection with highlighting since that would be wierd //getIntersection(highlights_Ids);
-			//Now color everything that has not been filtered and save the nodes
+		
+			//Now color everything that has not been filtered and save the nodes			
+			var keepIds = _.flatten(highlights_Ids);
 			keepNodes.forEach(function(n) {
 				if(($.inArray(n.id, keepIds )) > -1){
-					n.color = "rgb(255,255,0)";
+            		n.type = "highlight";	            
 				}
 			});
+			$("#sigma-container").css("background-color", "#d9d3be");
 		}
 	}	
 	

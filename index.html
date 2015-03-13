@@ -43,6 +43,7 @@
 	ga('create', 'UA-60418603-1', 'auto');
   	ga('send', 'pageview');
   	
+  	//////////////
     //Load data
     $(document).ready(function() {
     	$('#status').button('loading'); //Set loading sign
@@ -67,8 +68,9 @@
     	
     	$.getJSON( "ini.json")
 	   	 	.done(function(data) {
+    			window.globalsettings = data.globalsettings;
     			selectGraph(data);
-    			$("#titel").text(data.globalsettings.header);
+    			$("#titel").text(globalsettings.header);
     			if(window.graph == ""){
 	    			$( '.ui-dialog-titlebar-close')[0].style.display = 'none';
 	    			//load select network page
@@ -80,18 +82,6 @@
     				$("#graph_changer").text(ini.graph_header);
     				drawGraph();
 	    		}
-	    		//Hide all menus and turn them on one by one upon population
-				$('#menu li').each(function (){
-  					$(this).hide();
-				});	
-	    		
-	    		//Create canvasSize object
-	    		calCanvassize();
-	    		//Listen for resize
-			 	var myEfficientFn = _.debounce(function() {
-			 		calCanvassize(); 
-			 	}, 250);
-				window.addEventListener('resize', myEfficientFn);
    	 		})
         	.fail(function(failure) {
                   console.log("Error when loading json file");
@@ -115,7 +105,7 @@
 			
 			<div id="status_container" class="col-md-2">
 				<button type="button" id="status" data-loading-text="Loading Search engine..." data-complete-text="Network loaded." data-error-text="The system encountered an error" data-embed-text="Embed code generated:" class="btn btn-info btn-block" autocomplete="off"></button>
-				<input type="text" class="form-control" id="embed">
+				<!--<code></code>--><input type="text" class="form-control" id="embed">
 			</div>
 			<div id="dialog" title="Select graph">
   				<p>Please chose basic graph to navigate:</p>
@@ -128,22 +118,22 @@
         	<div id="sigma-container" class="col-md-10">
         		<div class="col.md-1 leftButtons">
         			<div id="resetcamera" >
-						<button type="button" class="btn btn-default" aria-label="Reset camera" onclick="resetCamera(); this.blur();">
+						<button type="button" class="btn btn-default" aria-label="Reset camera" onclick="resetCamera(); performSearch(); this.blur();">
   							<span class="glyphicon glyphicon-repeat" aria-hidden="true"></span> Reset view
 						</button>
 					</div>
 
-					<div id="savetoSVG" class="col.md-1">
+					<div id="savetoSVG" class="col.md-1 hide">
 						<button type="button" class="btn btn-default" aria-label="Save to SVG" onclick="captureSVG(); this.blur();">
   							<span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span> Capture SVG
 						</button>
 					</div>
-					<div id="savetoCanvas" class="col.md-1">
+					<div id="savetoCanvas" class="col.md-1 hide">
 						<button type="button" class="btn btn-default" aria-label="Save to Canvas" onclick="captureCanvas(); this.blur();">
   							<span class="glyphicon glyphicon-picture" aria-hidden="true"></span> Capture Canvas
 						</button>
 					</div>
-					<div id="embedSigma" class="col.md-1">
+					<div id="embedSigma" class="col.md-1 hide">
 						<button type="button" class="btn btn-default" aria-label="Generate an embed code for your current network" onclick="createEmbed(); this.blur();">
   							<span class="glyphicon glyphicon-link" aria-hidden="true"></span> Embed network
 						</button>
@@ -153,35 +143,48 @@
 		  	
 		  	
 		  		<!-- Tab panes -->
-  				<div id="settings" class="col-md-3 well">
+  				<div id="settings" class="col-md-3 col-xs-3 well">
   					<div id="menu" role="tabpanel">
   				   		<ul class="nav nav-pills nav-justified" role="tablist">
-    						<li id="size_menu" role="presentation" class="menu_element"><a href="#size" aria-controls="size" role="tab" data-toggle="tab">Size</a></li>
-			  				<li id="color_menu" role="presentation" class="menu_element"><a href="#color" aria-controls="color" role="tab" data-toggle="tab">Color</a></li>
-	    					<li id="layout_menu" role="presentation" class="menu_element"><a href="#layout" aria-controls="layout" role="tab" data-toggle="tab">Layout</a></li> 
+    						<li id="size_menu" role="presentation" class="menu_element hide"><a href="#size" aria-controls="size" role="tab" data-toggle="tab">Size</a></li>
+			  				<li id="color_menu" role="presentation" class="menu_element hide"><a href="#color" aria-controls="color" role="tab" data-toggle="tab">Color</a></li>
+	    					<li id="layout_menu" role="presentation" class="menu_element hide"><a href="#layout" aria-controls="layout" role="tab" data-toggle="tab">Layout</a></li> 
     						<li id="search_menu" role="presentation" class="menu_element"><a href="#search" aria-controls="search" role="tab" data-toggle="tab">Search</a></li>
 				  		</ul>
 			  		</div>
 			  		<div class="tab-content">
     					<div role="tabpanel" class="tab-pane active" id="size">
-    						<div id="size_by_container"></div>
+    						<div id="size_by_container" class="contain"></div>
     					</div>
     					<div role="tabpanel" class="tab-pane" id="color">
-    						<div id="color_by_container"><span class="glyphicon glyphicon-erase"></span></div>
+    						<div id="color_by_container" ><span class="glyphicon glyphicon-erase"></span></div>
     					</div>
     					<div role="tabpanel" class="tab-pane" id="layout">
     						<div id="merge_by_container"><span class="glyphicon glyphicon-qrcode"></div>
-    						<div id="compare_by_container"><span class="glyphicon glyphicon-stats"></div>
+    						<div id="compare_by_container" class="contain"><span class="glyphicon glyphicon-stats"></div>
     					</div>
     					<div role="tabpanel" class="tab-pane" id="search">
-    						<div id="filter_by_container"><div><span class="glyphicon glyphicon-filter"></span> Filter:</div></div>
-    						<div id="highlight_by_container"><div><span class="glyphicon glyphicon-pushpin"></span> Highlight:</div></div>
+    						<div id="filter_by_container" class="filter_container">
+    							<div class="filter_header"><span class="glyphicon glyphicon-filter"></span> Filter:</div>
+    						</div>
+    					    <div id="highlight_by_container" class="filter_container contain">
+	    					    <div class="filter_header"><span class="glyphicon glyphicon-pushpin"></span> Highlight:</div>
+    					    </div>
     					</div>
   					</div>
 				</div>
 				<div id="details_view" class="col-md-2 well"></div>
 					
         </div>
+    </div>
+    <div class="row footer">
+        <div class="col-md-8"></div>
+        <div class="col-md-4 bottom-row-item">
+        	<p><i><small>A collaboration between:</small></i></p>
+            <a href="http://www.soc.ku.dk/english/" target="_blank" class="bottom-row-brand "><img src="/css/images/logo_ku.jpg" class="ku-brand"></a>
+			<a href="http://medialab.sciences-po.fr" target="_blank" class="bottom-row-brand "><img src="/css/images/logo_medialab.png" class="medialab-brand"></a>
+        </div>       
 	</div>
+</div>
 </body>
 </html>

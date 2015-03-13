@@ -27,7 +27,7 @@ function calCanvassize(){
     	extramarginWidth: extramarginWidth,
     	cameraX: cameraX   				
     };
-    console.log(window.canvasSize);
+    s.refresh();
 }
 
 //Reset view everytime we do a search
@@ -57,25 +57,25 @@ function resetView(){
   		}
 	});
 	//Set settings back to original
+	$("#details_view").hide();
+	$("#sigma-container").css("background-color", "#f2f0e9");
 	s.settings({autoRescale: true, scalingMode:"inside"});
 	//Undisable all filters
 	$(":disabled").prop('disabled',false).trigger("chosen:updated");
 }
-
+	
 //Reset Camera by button
 function resetCamera(){
-	resetSelected(); //Remove user selctions if any
-	
 	var camera = s.camera;
     sigma.misc.animation.camera(
       camera,
       {x: window.canvasSize.cameraX, y: 0, angle: 0, ratio: 1},
-      {duration: 150}
+      {duration: 250}
     );
 }
 
 //Reset selected Node
-function resetSelected(){
+/*function resetSelected(){
 	//change the sigma background back
 	$("#sigma-container").css("background-color", "#f2f0e9");
 	//hide details view:
@@ -87,6 +87,15 @@ function resetSelected(){
 		}
 	});
 	s.refresh();
+
+}*/
+
+function activateCapture(){
+	Object.keys(globalsettings.captures).forEach(function(key){
+		if(globalsettings.captures[key]){
+			$('#'+key+'').removeClass('hide');
+		}
+	});
 }
 
 //Capture canvas to SVG
@@ -103,7 +112,6 @@ function captureSVG(){
 //Capture canvas to png. Only works with canvas render.
 function captureCanvas(){
 	var canvases = $('#sigma-container').children();
-	console.log(canvases);
 	var ctx0 = canvases[3].getContext('2d');
 	var ctx1 = canvases[4].getContext('2d');
 	ctx0.drawImage(canvases[4], 0, 0);
@@ -201,7 +209,6 @@ function normalize(values){
 //Fill the detail info box
 function fillDetails(node, neighbors){
 	var gephiCols = window.ini.details_view.gephiCol;
-	console.log(node.attributes);
 	var labels = window.ini.details_view.label;
 	$("#details_view").html('<strong>'+node.label+'</strong><br>');
 	gephiCols.forEach(function(col, i){
@@ -214,6 +221,18 @@ function fillDetails(node, neighbors){
 		}
 	});
 	$("#details_view").show( );
+}
+
+//Remove spaces from window ini file 
+function removeSpaces(filters){	
+	filters.forEach(function(filter){
+		window.ini[filter].gephiCol.forEach(function(value, i){
+			window.ini[filter].gephiCol[i] = value.replace(/ /g,"_");
+			/*if(window.ini[filter].gephiCol[i] == "label"){
+				window.ini[filter].gephiCol[i] = "labelBug";
+			}*/
+		});
+	});
 }
 
 //Disable one or more filters
@@ -249,6 +268,12 @@ function updateStatus(state) {
 	}
 }
 
+//Show menu
+function showMenu(by){
+	var id = $("#"+by+"_container").parent().attr('id');
+	$("#"+id+"_menu").removeClass('hide')
+}
+
 //Function to extract all unique values for a specific attribute in given set of nodes   
 function getUniquetype(nodes, attribute){
 	var unique_attributes = [];
@@ -268,6 +293,15 @@ function getUniquetype(nodes, attribute){
 	//...and remove all duplicates
 	unique_attributes = _.uniq(unique_attributes, true); //...And removing all duplicates
 	return unique_attributes;	
+}
+
+//Returns dropdown for singleSelect filter 
+function getDropdown(_by){
+	var dropdown = [];
+	for (i = 0; i < _by.gephiCol.length; i++) { //Then run through the filters of _by type
+		dropdown.push(_by.gephiCol[i]);
+	}
+	return dropdown;
 }
 
 //Get intersections between two arrays
