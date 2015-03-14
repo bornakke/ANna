@@ -1,4 +1,4 @@
-# ANna - v0.5
+# ANna ![Logo](https://github.com/bornakke/ANna/blob/master/css/images/annalogo_small.png) 
 Actor-Network NAvigator is a tool to publish big network as interactive network visualizations. The tool is developed in collaboration between the SceincePo Medialab (http://tools.medialab.sciences-po.fr/) and Copenhagen University (KU.dk).
 
 ### Background
