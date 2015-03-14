@@ -107,8 +107,8 @@ margin-top:30px;
 }
 
 .row .page-header{
-margin-top:20px;
-margin-bottom:10px;
+margin-top:10px;
+margin-bottom:5px;
 }
 #embed{
 	opacity: 0;
@@ -119,6 +119,7 @@ margin-top:10px;
 }
 .ku-brand{
 padding-right:30px;
+margin-left:15px;
 }
 .contain{
 padding-top:20px;
@@ -134,4 +135,23 @@ padding-top:5px;
 }
 .filter_header{
 margin-bottom:10px;
+}
+#annalogo{
+width:45px;
+height:45px;
+background-size: 45px 45px;
+background-image: url("images/annalogo.png");
+border: 1px solid #ccc;
+box-shadow: 1px 1px 1px #888888;
+}
+#annalogo2{
+width:150px;
+height:150px
+background-size: 150px 150px;
+background-image: url("images/annalogo.png");
+border: 1px solid #ccc;
+box-shadow: 1px 1px 1px #888888;
+}
+.indent{
+margin-left:25px;
 }

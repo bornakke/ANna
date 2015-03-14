@@ -1,3 +1,17 @@
+function selectGraph(full_ini){
+	Object.keys(full_ini).forEach(function(key){
+		if(key != "globalsettings"){
+			$("#graphs").append('<div class="'+ key +' basicgraph" ><a id="'+key+'" href="#"><h4>'+full_ini[key].graph_header+'</h4><img src='+(full_ini[key].logo_url == "" ? "'/css/images/annalogo.png'"+" id='annalogo2'" : full_ini[key].logo_url)+' class="logo"/></a></div>');
+			$('#'+key+'').click( function(e) { 
+				e.preventDefault(); //Prevent the link from asking for #
+				url = location.href +'#?graph='+key;
+				window.location.href = url; //Set the url
+				location.reload(); //And reload it
+			});
+		}
+	});
+}
+
 //Get CanvasSize, called when window is resized
 function calCanvassize(){
 	//Get height from window and width from sigma container

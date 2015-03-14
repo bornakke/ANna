@@ -1,7 +1,7 @@
 {
  "globalsettings":
  	{
- 	"header": "ANna v0.4",
+ 	"header": "ANna",
  	"captures": {
  			"savetoSVG": true,
  			"savetoCanvas": true,
@@ -47,7 +47,7 @@
 	{
 	"graph_header": "The Danish Power Elite",
 	"basemap": "data/elitepersons.gexf",
-	"logo_url": "data/elitepersons.png",
+	"logo_url": "",
 	"spatilize": false,
 	"filter_by": {
 				"label": ["Modularity", "Name"],

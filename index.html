@@ -11,30 +11,27 @@
     <!-- Use sigma.js for tag graph visualisation -->
     <script type="text/javascript" src="js/sigma.min.js"></script>
     <script type="text/javascript" src="js/sigma.parsers.gexf.min.js"></script>
-	<script type="text/javascript" src="js/sigma.canvas.renders.js"></script>
-	<script type="text/javascript" src="js/sigma.layout.forceAtlas2.min.js"></script>
-	<script type="text/javascript" src="js/sigma.exporters.svg.js"></script>	
+	<script async type="text/javascript" src="js/sigma.canvas.renders.js"></script>
+	<script async type="text/javascript" src="js/sigma.layout.forceAtlas2.min.js"></script>
+	<script async type="text/javascript" src="js/sigma.exporters.svg.js"></script>	
    
     <!-- For various purposes -->
     <script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
     <script type="text/javascript" src="js/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="js/underscore-1.7.0.min.js"></script>
-    <script type="text/javascript" src="js/chosen.jquery.min.js"></script>
     <script type="text/javascript" src="js/bootstrap.min.js"></script>
-
+    <script async type="text/javascript" src="js/underscore-1.7.0.min.js"></script>
+    <script async type="text/javascript" src="js/chosen.jquery.min.js"></script>
     
     <!-- ANna JS -->
-    <script type="text/javascript" src="functions.js"></script>
     <script type="text/javascript" src="helpers.js"></script>
+    <script async type="text/javascript" src="functions.js"></script>
     
     <!-- Color -->
-    <script type="text/javascript" src="js/colorscheme.js"></script>
+    <script async type="text/javascript" src="js/colorscheme.js"></script>
     
 
     <!-- Global state -->
     <script type="text/javascript">
-    window.graph = getUrlParameter("graph");
-    
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
   	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -46,6 +43,7 @@
   	//////////////
     //Load data
     $(document).ready(function() {
+    	window.graph = getUrlParameter("graph");
     	$('#status').button('loading'); //Set loading sign
     	//Graph changer
     	$( "#dialog" ).dialog({
@@ -74,7 +72,7 @@
     			if(window.graph == ""){
 	    			$( '.ui-dialog-titlebar-close')[0].style.display = 'none';
 	    			//load select network page
-	    			$( "#dialog" ).dialog( "open" ); //TODO ADD PARAMETER THAT YOU MAY NOT SHUT DOWN MODAL BOX
+	    			$( "#dialog" ).dialog( "open" );
     			}
     			else{//Load specific graph
     			    $( '.ui-dialog-titlebar-close')[0].style.display = 'inline';			    
@@ -178,7 +176,12 @@
         </div>
     </div>
     <div class="row footer">
-        <div class="col-md-8"></div>
+        <div class="col-md-2">
+	        <p style="margin-left: 10px;"><i><small>Powered by:</i></small></p>
+	        <div id="annalogo" class="indent"></div>
+	        <p style="margin-left: 20px;"><small><a href="https://github.com/bornakke/ANna/" target="_blank">ANna v0.5</a></small></p>
+        </div>
+        <div class="col-md-6"></div>
         <div class="col-md-4 bottom-row-item">
         	<p><i><small>A collaboration between:</small></i></p>
             <a href="http://www.soc.ku.dk/english/" target="_blank" class="bottom-row-brand "><img src="css/images/logo_ku.jpg" class="ku-brand"></a>
