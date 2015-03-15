@@ -9,7 +9,7 @@ function drawGraph() {
       		//type: 'canvas' // force it to canvas so that we can get a screenshot. Disable line to go back to webGL.
       		}
   		],
-  		settings: {"labelThreshold": 20, "batchEdgesDrawing":true, "hideEdgesOnMove":true}
+  		settings: {"labelThreshold": 20, "batchEdgesDrawing":true, "hideEdgesOnMove":true, "canvasEdgesBatchSize":250, "webglEdgesBatchSize":500}
   	});
   	
 	//Parse data
@@ -94,6 +94,8 @@ function drawGraph() {
 	
 	//same as resetCamera except no search performed since it is not ready yet.
 	resetCamera();
+	$("#ajaxloader").fadeOut( "slow");
+	$("#dim").fadeOut( "slow");	
 	s.refresh();
 	
 	createInterface();

@@ -1,0 +1,46 @@
+{
+ "globalsettings":
+ 	{
+ 	"header": "ANna",
+ 	"captures": {
+ 			"savetoSVG": true,
+ 			"savetoCanvas": true,
+ 			"embedSigma": true
+ 			}
+ 	},
+ "graph1":
+	{
+	"graph_header": "The Danish Power Elite",
+	"basemap": "data/person-person.gexf",
+	"logo_url": "",
+	"spatilize": false,
+	"filter_by": {
+				"label": ["Afiliation", "Name", "Role"],
+				"gephiCol": ["affiliation", "name", "role"],
+				"keepNeighbors": [false, true, false]
+				},
+	"highlight_by": {
+				"label": ["Afiliation", "Role", "Gender"],
+				"gephiCol": ["affiliation",  "role", "gender"],
+				"keepNeighbors": [true, false, false]
+				},
+	"color_by": {
+				"label": "Color by",
+				"gephiCol": ["gender"]
+				},
+	"compare_by": {
+				"label": "Compare by",
+				"gephiCol": ["gender"]
+				},
+	"merge_by": {
+				"label": "Merge by",
+				"gephiCol": ["gender"]
+				},
+	"size_by": ["original", "degree", "indegree", "outdegree"],
+	"details_view": {
+				"label": ["Role", "Gender", "Source", "CVR", "BIQ", "Deskription"],
+				"gephiCol": ["role", "gender", "source", "cvr", "biq", "description"],
+				"keepNeighbors": true
+				}
+	}
+}
