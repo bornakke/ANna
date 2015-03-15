@@ -9,7 +9,7 @@ function drawGraph() {
       		//type: 'canvas' // force it to canvas so that we can get a screenshot. Disable line to go back to webGL.
       		}
   		],
-  		settings: {"labelThreshold": 20, "batchEdgesDrawing":true, "hideEdgesOnMove":true, "canvasEdgesBatchSize":250, "webglEdgesBatchSize":500}
+  		settings: {"labelThreshold": 20, "batchEdgesDrawing":true, "hideEdgesOnMove":true, "zoomingRatio":1.7}
   	});
   	
 	//Parse data
@@ -555,14 +555,15 @@ function performSearch() {
 			//});
 		}
 		if(!(_.isEmpty(highlights_Ids))){ //only run this if we did a highlight 
-		
 			//Now color everything that has not been filtered and save the nodes			
 			var keepIds = _.flatten(highlights_Ids);
 			keepNodes.forEach(function(n) {
 				if(($.inArray(n.id, keepIds )) > -1){
+            		n.color = "rgb(255,255,255)"; //Also done by render, but not if you are in webgl
             		n.type = "highlight";	            
 				}
 			});
+			console.log(s.renderers);
 			$("#sigma-container").css("background-color", "#d9d3be");
 		}
 	}	
@@ -626,12 +627,4 @@ function performSearch() {
 	}
 	
     s.refresh();
-    
-    //Update status message
-    if(keepNodes.length > 1 || keepNodes.length == 0){
-    	updateStatus("Showing " + keepNodes.length + " results.");
-    }
-    else{
-    	updateStatus("Showing 1 result");
-    }
 }

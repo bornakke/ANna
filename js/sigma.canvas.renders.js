@@ -1,5 +1,6 @@
-sigma.canvas.nodes.onlylabel = function() { };
-sigma.webgl.nodes.onlylabel = {addNode: function() {}, render: function() {}, initProgram: function(){}};
+//sigma.canvas.nodes.onlylabel = function() { };
+//sigma.webgl.nodes.onlylabel = {addNode: function() {}, render: function() {}, initProgram: function(){}};
+//sigma.webgl.edges.def = sigma.webgl.edges.fast;
 //sigma.webgl.nodes.highlight =  sigma.canvas.nodes.highlight;
 
 /**
@@ -11,6 +12,8 @@ sigma.webgl.nodes.onlylabel = {addNode: function() {}, render: function() {}, in
    */
   sigma.canvas.nodes.highlight = function(node, context, settings) {
     var prefix = settings('prefix') || '';
+    
+    console.log(node);
     
     context.fillStyle = '#FFFFFF'
     context.shadowColor = '#FFFF00';

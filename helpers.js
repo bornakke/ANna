@@ -1,7 +1,7 @@
 function selectGraph(full_ini){
 	Object.keys(full_ini).forEach(function(key){
 		if(key != "globalsettings"){
-			$("#graphs").append('<div class="'+ key +' basicgraph" ><a id="'+key+'" href="#"><h4>'+full_ini[key].graph_header+'</h4><img src='+(full_ini[key].logo_url == "" ? "'/css/images/annalogo.png'"+" id='annalogo2'" : full_ini[key].logo_url)+' class="logo"/></a></div>');
+			$("#graphs").append('<div class="'+ key +' basicgraph" ><a id="'+key+'" href="#"><h4>'+full_ini[key].graph_header+'</h4><img src='+(full_ini[key].logo_url == "" ? "'css/images/annalogo.png'"+" id='annalogo2'" : full_ini[key].logo_url)+' class="logo"/></a></div>');
 			$('#'+key+'').click( function(e) { 
 				e.preventDefault(); //Prevent the link from asking for #
 				url = location.href +'#?graph='+key;
@@ -123,11 +123,26 @@ function captureSVG(){
 	savetoserver("svg", svg);
 }
 
+function changeRender(type){
+    for(i in s.renderers) {
+            s.renderers[i].clear();
+            s.killRenderer(i);
+    }
+	s.addRenderer({container: 'sigma-container', type: type});
+	s.render();
+	s.refresh();
+}
+
 //Capture canvas to png. Only works with canvas render.
 function captureCanvas(){
+	changeRender("canvas");
+	
+	setTimeout(function () {
 	var canvases = $('#sigma-container').children();
+	
 	var ctx0 = canvases[3].getContext('2d');
 	var ctx1 = canvases[4].getContext('2d');
+	
 	ctx0.drawImage(canvases[4], 0, 0);
 	var img    = canvases[3].toDataURL();
 	var html = '<img src="'+img+'"/>';
@@ -136,9 +151,16 @@ function captureCanvas(){
 	var width = window.canvasSize.width+50;
 	var popupWindow = window.open("","","menubar=0,scrollbars=0,height="+height+",width="+width+"");
 	
+	console.log(html);
 	popupWindow.document.write(html);
 	popupWindow.document.close();
+
 	savetoserver("png", img);
+	
+	//Set the render back. 
+	changeRender("webgl");
+
+ 	}, 2500);	
 }
 
 function createEmbed(){
@@ -169,7 +191,8 @@ function createEmbed(){
 
 //Save copy to server for monitoring
 var savetoserver = function savetoserver(filetype, data){
-	$.ajax({
+	if (document.location.hostname != "localhost"){ //We cannot make contact if we are on a localhost
+		$.ajax({
   		type: "POST",
 		url: "http://www.cadm.dk/elite/savetoserver.php",
 	  	data: {filetype: filetype, data:data}
@@ -179,6 +202,7 @@ var savetoserver = function savetoserver(filetype, data){
   	
 	//Send info to Google Analytics
 	ga('send', 'event', filetype, 'download');
+	}
 }
 
 //Get URL from browser location
@@ -275,7 +299,7 @@ function updateStatus(state) {
 		status.fadeTo( "fast" , 1);
 		status.button(state);
 		
-		$('#embed').delay(10000).fadeTo( "slow" , 0, function(){
+		$('#embed').delay(20000).fadeTo( "slow" , 0, function(){
 			status.button("complete");
 			status.delay(1200).fadeTo( "slow" , 0.6);
 		});
