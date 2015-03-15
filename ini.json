@@ -6,7 +6,9 @@
  			"savetoSVG": true,
  			"savetoCanvas": true,
  			"embedSigma": true
- 			}
+ 			},
+ 	"logo": "data/november_med_partier.png",
+ 	"url": "http://www.cadm.dk"
  	},
  "graph1":
 	{

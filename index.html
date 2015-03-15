@@ -73,13 +73,14 @@
     			if(!("graph2" in data)){
     				window.graph = "graph1";    			
     			}
-    			if(window.graph != ""){
+    			if(window.graph != ""){//Load specific graph
 	    			 $( '.ui-dialog-titlebar-close')[0].style.display = 'inline';			    
     			    window.ini = data[window.graph];
     				$("#graph_changer").text(ini.graph_header);
+    				changeLogo(globalsettings.logo, globalsettings.url);
     				drawGraph();
     			}
-    			else{//Load specific graph
+    			else{
 	    			$( '.ui-dialog-titlebar-close')[0].style.display = 'none';
 	    			//load select network page
 	    			$( "#dialog" ).dialog( "open" );
@@ -179,17 +180,17 @@
 					
         </div>
     </div>
-    <div class="row footer">
+    <div class="row" id="footer">
         <div class="col-md-2">
 	        <p style="margin-left: 10px;"><i><small>Powered by:</i></small></p>
 	        <div id="annalogo" class="indent"></div>
 	        <p style="margin-left: 20px;"><small><a href="https://github.com/bornakke/ANna/" target="_blank">ANna v0.5</a></small></p>
         </div>
         <div class="col-md-6"></div>
-        <div class="col-md-4 bottom-row-item">
+        <div id="logos" class="col-md-4 bottom-row-item">
         	<p><i><small>A collaboration between:</small></i></p>
-            <a href="http://www.soc.ku.dk/english/" target="_blank" class="bottom-row-brand "><img src="css/images/logo_ku.jpg" class="ku-brand"></a>
-			<a href="http://medialab.sciences-po.fr" target="_blank" class="bottom-row-brand "><img src="css/images/logo_medialab.png" class="medialab-brand"></a>
+            <a id="logo_ku" href="http://www.soc.ku.dk/english/" target="_blank" class="bottom-row-brand "></a>
+			<a id="logo_medialab" href="http://medialab.sciences-po.fr" target="_blank" class="bottom-row-brand "></a>
         </div>       
 	</div>
 </div>

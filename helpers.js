@@ -1,3 +1,7 @@
+function changeLogo(logo, url){
+	$("#logos").hide();
+	$("#footer").append('<div class="col-md-2 col-md-offset-2 bottom-row-item"><p><i><small>A production by:</small></i></p><a id="logo_generic" href="'+url+'" target="_blank" class="bottom-row-brand "><img height="50px" src="'+logo+'"></a></div></div>');			
+}
 function selectGraph(full_ini){
 	Object.keys(full_ini).forEach(function(key){
 		if(key != "globalsettings"){

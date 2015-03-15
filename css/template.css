@@ -158,6 +158,24 @@ box-shadow: 1px 1px 1px #888888;
 margin-left:25px;
 }
 
+#logo_medialab{
+display:inline-block;
+width:200px;
+height:38px;
+background-size: 200px 38px;
+background-image: url("images/logo_medialab.png");
+}
+#logo_ku{
+display:inline-block;
+width:177px;
+height:50px;
+background-size: 177px 50px;
+background-image: url("images/logo_ku.jpg");
+}
+logo_generic{
+width:50px;
+height:50px;
+}
 /* AJAX Loader */
 /* http://blogs.sitepointstatic.com/examples/tech/css3-ajax-icon/index.html*/
 #ajaxloader
