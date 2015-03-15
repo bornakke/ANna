@@ -24,7 +24,7 @@
     
     <!-- ANna JS -->
     <script type="text/javascript" src="helpers.js"></script>
-    <script async type="text/javascript" src="functions.js"></script>
+    <script type="text/javascript" src="functions.js"></script>
     
     <!-- Color -->
     <script async type="text/javascript" src="js/colorscheme.js"></script>
@@ -69,16 +69,20 @@
     			window.globalsettings = data.globalsettings;
     			selectGraph(data);
     			$("#titel").text(globalsettings.header);
-    			if(window.graph == ""){
-	    			$( '.ui-dialog-titlebar-close')[0].style.display = 'none';
-	    			//load select network page
-	    			$( "#dialog" ).dialog( "open" );
+    			
+    			if(!("graph2" in data)){
+    				window.graph = "graph1";    			
     			}
-    			else{//Load specific graph
-    			    $( '.ui-dialog-titlebar-close')[0].style.display = 'inline';			    
+    			if(window.graph != ""){
+	    			 $( '.ui-dialog-titlebar-close')[0].style.display = 'inline';			    
     			    window.ini = data[window.graph];
     				$("#graph_changer").text(ini.graph_header);
     				drawGraph();
+    			}
+    			else{//Load specific graph
+	    			$( '.ui-dialog-titlebar-close')[0].style.display = 'none';
+	    			//load select network page
+	    			$( "#dialog" ).dialog( "open" );
 	    		}
    	 		})
         	.fail(function(failure) {

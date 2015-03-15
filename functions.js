@@ -5,11 +5,11 @@ function drawGraph() {
 	window.s = new sigma({ 
 		renderers: [
    	 		{
-      		container: 'sigma-container',
-      		type: 'canvas' // force it to canvas so that we can get a screenshot. Disable line to go back to webGL
+      		container: 'sigma-container'
+      		//type: 'canvas' // force it to canvas so that we can get a screenshot. Disable line to go back to webGL.
       		}
   		],
-  		settings: {}
+  		settings: {"labelThreshold": 20, "batchEdgesDrawing":true, "hideEdgesOnMove":true}
   	});
   	
 	//Parse data

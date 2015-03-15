@@ -3,6 +3,11 @@
     border: 1px solid #ccc;
     border-radius: 3px;
 	width: 99%;
+	min-height:500px;
+	background-size: 66px 66px;
+	background-image: url("images/ajax-loader.gif");
+	background-repeat: no-repeat;
+	background-position: center center; 
 }
 
 #menu{

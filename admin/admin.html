@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Admin</title>
+	<link type="text/css" rel="stylesheet" href="css/chosen.min.css">
+	<link type="text/css" rel="stylesheet" href="css/bootstrap.min.css">
+    <style>
+    #sigma-container{
+    width:600;
+    height:400px;
+    }
+    .strong{
+    font-weight:bold;
+    }
+    .labelinput{
+    width:150px;
+    float:left;
+    margin-left: 25px;
+    }
+    </style>
+    <script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="js/sigma.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script async type="text/javascript" src="js/chosen.jquery.min.js"></script>
+     <script async type="text/javascript" src="js/underscore-1.7.0.min.js"></script>
+   
+    <script type="text/javascript" src="js/sigma.parsers.gexf.min.js"></script>
+	<script async type="text/javascript" src="js/sigma.layout.forceAtlas2.min.js"></script>
+
+	<script>
+	function getAttributes(nodes){
+		var attributeKeys = [];
+		nodes.forEach(function(n){
+			//Add attribute keys
+			Object.keys(n.attributes).forEach(function(key){
+				attributeKeys.push(key.toLowerCase());
+			});
+		});
+		
+		
+		
+		
+		//Sort
+		attributeKeys = attributeKeys.sort();
+		//...and remove all duplicates
+		attributeKeys = _.uniq(attributeKeys, true);
+		
+		return attributeKeys;
+	}
+	
+	function populate3(){
+	
+	}
+	
+	
+	//////////////
+    //Load data
+    $(document).ready(function() {
+		//Get the name of the uploaded file
+		//Right now we simply parse a static file
+		//Todo also make it posible to recieve more than one file. Probably by letting the admin stay open after a file has been configured
+		
+		 ////////////////////////////////////////////////////////////////////////
+		//Gloablly define sigma instance
+		window.s = new sigma({ 
+			renderers: [
+   	 		{
+      		container: 'sigma-container'
+      		}
+  		],
+  		settings: {mouseEnabled: false, mouseWheelEnabled: false}
+  		});
+  	
+		//Parse data
+    	sigma.parsers.gexf("data/november_med_partier.gexf", function(graph) {
+		
+			//Change the id of attributes to its titel to secure compatibility with gephi
+			//First build a list to compare with
+			var attributesTitel = {};
+			graph.model.node.forEach(function(m, i) {
+				attributesTitel[m.id] = m.title;
+			});
+			//TODO: This might give us trouble later.
+			graph.nodes.forEach(function(n) {
+				Object.keys(n.attributes).forEach(function(old_key){
+					new_key = attributesTitel[old_key].toLowerCase(); //Convert to lowercase to make it easier to work with
+					new_key = new_key.replace(/ /g,"_"); //Remove spaces to make it easier to work with
+					n.attributes[new_key] = n.attributes[old_key];
+					if(new_key != old_key.toLowerCase()){
+						delete n.attributes[old_key];
+					}
+				});
+			});
+		
+		
+		
+			//Connect instance with the imported graph. From here S is the place to start rather than graph
+			s.graph.read(graph);
+		
+			var nodes = s.graph.nodes();
+			var attributeKeys = getAttributes(nodes);
+	
+			//Todo: We need a third page to allow people to label different filters. 
+			//The list of filters we have	
+			var filters = ["filter_by", "highlight_by", "color_by", "compare_by", "merge_by", "size_by", "details_view"];
+	
+			filters.forEach(function(filter){
+				//Create and populate multiple select for the filters
+				$("#filters").append("<div id='"+filter+"_container'><label for='"+filter+"'>Select columns to "+filter+":</label><select id='"+filter+"' class='chosen-select' multiple='true'></div>");
+				
+				//Create label containers
+				$("#labeling_container").append("<div id='"+filter+"_labeling' class='clearfix hide'><p class='pull-left clearfix'>Labeling <strong>"+filter+"</strong>: </p></div>");
+				
+				
+				if(filter != "size_by"){
+				$("#"+filter+"").append($('<option/>', { value: "label", text: "label", class: "strong" }));
+				}
+				else{
+					$("#"+filter+"").append($('<option/>', { value: "original", text: "original", class: "strong" }));
+    				$("#"+filter+"").append($('<option/>', { value: "degree", text: "degree", class: "strong" }));
+    				$("#"+filter+"").append($('<option/>', { value: "indegree", text: "indegree", class: "strong" }));
+    				$("#"+filter+"").append($('<option/>', { value: "outdegree", text: "outdegree", class: "strong" }));
+    			}
+				
+				//Adding tags to multiselects...
+				attributeKeys.map(function(attribute){
+					$("#"+filter+"").append($('<option/>', { value: attribute, text: attribute }));
+				});
+				
+				//When selecting options, automatically add/remove input fields.
+				$("#"+filter+"").on('change', function(event, params){
+    				var values = $("#"+filter+"").val();
+    				var labelinputs = $("#"+filter+"_labeling :input");
+    				if(values != null){
+	    				if(values.length > labelinputs.length){
+    						$("#"+filter+"_labeling").append("<input type='text' class='form-control labelinput' id='"+filter+"_label"+values.length+"' placeholder='Enter label for"+values[length]+">");
+    						if(values.length == 1) //First box added
+    							$("#"+filter+"_labeling").removeClass('hide');
+    					}
+    					if(values.length < labelinputs.length){
+    						$("#"+filter+"_label"+labelinputs.length+"").remove();
+    					}
+    				}
+    				else{ //Last box is being removed
+    					$("#"+filter+"_label"+labelinputs.length+"").remove();
+    					$("#"+filter+"_labeling").addClass('hide');
+    				}
+    			});
+    
+	    		$("#"+filter+"").chosen({
+    				search_contains: true,
+        			no_results_text: 'No results found',
+        			placeholder_text_multiple: 'Chose one or more entities...',
+        			width: '60%'
+    			});
+			
+			});
+			
+		});
+	});
+	</script>
+</head>
+<body>
+	<!-- This is the page that you are sent to when you have uploaded a file -->
+	<div id="container">
+		<!-- Header row-->
+		<div class="row">
+			<div class="page-header col-md-12">
+				<h1>
+				<span id="titel">ANna</span>
+				<small>Step 2: Configure</small>
+				</h1>
+			</div>
+		</div>
+		
+		<div class="row">
+			<!-- Configuration -->
+			<div id="configuration" class="col-md-5 col-md-offset-1">
+				
+				<!-- this could all go to the page where you upload your gexf -->
+				<h3>Global Settings</h3>
+				<div id="globalsettings" class="well">
+					<div class="form-group">
+  						<label for="header">Global header:</label>
+  						<input type="text" class="form-control" id="header">
+					</div>
+					<h4>Export posibilities:</h4>
+					<label class="checkbox-inline"><input type="checkbox" id="savetoSVG" value="">Save to svg</label>
+					<label class="checkbox-inline"><input type="checkbox" id="savetoCanvas" value="">Save to png</label>
+					<label class="checkbox-inline"><input type="checkbox" id="embedSigma" value="">Embed graph</label>
+				</div>
+				
+				<h3>Graph settings</h3>
+				<div id="graph1" class="well">	
+					<div class="form-group">
+  						<label for="graph_header">Graph name</label>
+  						<input type="text" class="form-control" id="graph_header">
+					</div>
+					<div class="form-group">
+  						<label for="logo_url"> Select logo:(Optional)</label>
+  						 <input type="file" name="fileToUpload" id="logo_url">
+					</div>
+					<div class="form-group">
+  						<label class="checkbox-inline"><input type="checkbox" id="spatilize" value="">Spatialise graph with ForceAtlas2 before embedding:</label>
+					</div>
+				</div>
+			</div>
+			<div id="sigma-container" class="col-md-5" ></div>
+		</div>
+		<div class="row">
+			<div id="filtering" class="col-md-5 col-md-offset-1">
+				<h3>Graph filtering</h3>
+				<div id="filters" class="well"></div>
+				<button type="button" class="btn btn-default" onclick="Populate3();">Proceed</button>
+			</div>
+			<div id="labeling" class="col-md-5">
+				<h3>Labeling</h3>
+				<div id="labeling_container" class="well">
+				
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

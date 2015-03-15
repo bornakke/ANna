@@ -1,0 +1,80 @@
+{
+ "globalsettings":
+ 	{
+ 	"header": "ANna",
+ 	"captures": {
+ 			"savetoSVG": true,
+ 			"savetoCanvas": true,
+ 			"embedSigma": true
+ 			}
+ 	},
+ "graph1":
+	{
+	"graph_header": "Twitter politik",
+	"basemap": "data/november_med_partier.gexf",
+	"logo_url": "data/november_med_partier.png",
+	"spatilize": false,
+	"filter_by": {
+				"label": ["Parti", "Name", "ID"],
+				"gephiCol": ["parti", "label", "id"],
+				"keepNeighbors": [true, true, false]
+				},
+	"highlight_by": {
+				"label": ["Location", "Timezone", "Name"],
+				"gephiCol": ["location", "from_user_timezone", "label"],
+				"keepNeighbors": [true, true, true]
+				},
+	"color_by": {
+				"label": "Color by",
+				"gephiCol": ["parti", "type"]
+				},
+	"compare_by": {
+				"label": "Compare by",
+				"gephiCol": ["parti", "hashtagfrequency"]
+				},
+	"merge_by": {
+				"label": "Merge by",
+				"gephiCol": ["type", "from_user_timezone"]
+				},
+	"size_by": ["original", "degree", "indegree", "outdegree"],
+	"details_view": {
+				"label": ["Location", "Timezone", "connections"],
+				"gephiCol": ["location", "from_user_timezone", "connections"],
+				"keepNeighbors": true
+				}
+	},
+ "graph2":
+	{
+	"graph_header": "The Danish Power Elite",
+	"basemap": "data/elitepersons.gexf",
+	"logo_url": "",
+	"spatilize": false,
+	"filter_by": {
+				"label": ["Modularity", "Name"],
+				"gephiCol": ["modularity class", "label"],
+				"keepNeighbors": [true, true]
+				},
+	"highlight_by": {
+				"label": ["Name"],
+				"gephiCol": ["label"],
+				"keepNeighbors": ["true"]
+				},
+	"color_by": {
+				"label": "Color by",
+				"gephiCol": ["modularity class"]
+				},
+	"compare_by": {
+				"label": "",
+				"gephiCol": [""]
+				},
+	"merge_by": {
+				"label": "",
+				"gephiCol": [""]
+				},
+	"details_view": {
+				"label": [""],
+				"gephiCol": [""],
+				"keepNeighbors": true
+				}
+	}
+}
