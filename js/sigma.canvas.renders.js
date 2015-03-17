@@ -1,5 +1,5 @@
-//sigma.canvas.nodes.onlylabel = function() { };
-//sigma.webgl.nodes.onlylabel = {addNode: function() {}, render: function() {}, initProgram: function(){}};
+sigma.canvas.nodes.onlylabel = function() { };
+sigma.webgl.nodes.onlylabel = {addNode: function() {}, render: function() {}, initProgram: function(){}};
 //sigma.webgl.edges.def = sigma.webgl.edges.fast;
 //sigma.webgl.nodes.highlight =  sigma.canvas.nodes.highlight;
 
@@ -12,13 +12,11 @@
    */
   sigma.canvas.nodes.highlight = function(node, context, settings) {
     var prefix = settings('prefix') || '';
-    
-    console.log(node);
-    
+
     context.fillStyle = '#FFFFFF'
     context.shadowColor = '#FFFF00';
     context.shadowBlur = node[prefix + 'size']*2;
-
+	context.strokeStyle = '#FFFFFF';
     context.beginPath();  
     context.arc(
       node[prefix + 'x'],
@@ -38,7 +36,6 @@
   
  
 sigma.canvas.labels.onlylabel = function(node, context, settings) {
-    
     var fontSize,
         prefix = settings('prefix') || '',
         size = node[prefix + 'size'];
@@ -72,3 +69,4 @@ sigma.canvas.labels.onlylabel = function(node, context, settings) {
     
       context.restore();
 };
+//sigma.webgl.labels.onlylabel = sigma.canvas.labels.onlylabel;

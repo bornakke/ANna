@@ -174,14 +174,17 @@ function createEmbed(){
 	var graph = {};
 	graph['nodes'] = nodes;
 	graph['edges'] = edges;
-
+	
+	var location = window.location.href;
+    location = location.substring(0, location.lastIndexOf('/'));
+	location = location+"/savetoserver.php";
+	
 	//Now save it and get the link
 	$.ajax({
   		type: "POST",
-		url: "http://www.cadm.dk/elite/savetoserver.php",
+		url: location,
 	  	data: {filetype: "json", data:JSON.stringify(graph)}
 	  	}).done(function(link) {
-    	
     		var url = window.location.href;
     		url = url.substring(0, url.lastIndexOf('/'));
     		url = url + '/embedder.php?json=' + encodeURIComponent(link);
@@ -196,9 +199,13 @@ function createEmbed(){
 //Save copy to server for monitoring
 var savetoserver = function savetoserver(filetype, data){
 	if (document.location.hostname != "localhost"){ //We cannot make contact if we are on a localhost
+		var location = window.location.href;
+    	location = location.substring(0, location.lastIndexOf('/'));
+		location = location+"/savetoserver.php";
+		
 		$.ajax({
   		type: "POST",
-		url: "http://www.cadm.dk/elite/savetoserver.php",
+		url: location,
 	  	data: {filetype: filetype, data:data}
 	  	}).done(function(response) {
     	console.log(response);
@@ -252,9 +259,11 @@ function normalize(values){
 function fillDetails(node, neighbors){
 	var gephiCols = window.ini.details_view.gephiCol;
 	var labels = window.ini.details_view.label;
-	$("#details_view").html('<strong>'+node.label+'</strong><br>');
 	gephiCols.forEach(function(col, i){
-		if(col == "connections"){
+		if(i == 0){
+			$("#details_view").html('<strong>'+node.attributes[col]+'</strong><br>');
+		}
+		else if(col == "connections"){
 			var connections = Object.keys(neighbors).length;
 			$("#details_view").append(''+labels[i]+': '+connections+'<br>');
 		}
@@ -269,7 +278,9 @@ function fillDetails(node, neighbors){
 function removeSpaces(filters){	
 	filters.forEach(function(filter){
 		window.ini[filter].gephiCol.forEach(function(value, i){
+			if(!_.isArray(value)){
 			window.ini[filter].gephiCol[i] = value.replace(/ /g,"_");
+			}
 			/*if(window.ini[filter].gephiCol[i] == "label"){
 				window.ini[filter].gephiCol[i] = "labelBug";
 			}*/

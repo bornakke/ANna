@@ -7,49 +7,14 @@
  			"savetoCanvas": true,
  			"embedSigma": true
  			},
- 	"logo": "data/november_med_partier.png",
- 	"url": "http://www.cadm.dk"
+ 	"logo": "",
+ 	"url": ""
  	},
- "graph1":
-	{
-	"graph_header": "The Danish Power Elite",
-	"basemap": "data/person-person.gexf",
-	"logo_url": "",
-	"spatilize": false,
-	"filter_by": {
-				"label": ["Afiliation", "Name", "Role"],
-				"gephiCol": ["affiliation", "name", "role"],
-				"keepNeighbors": [false, true, false]
-				},
-	"highlight_by": {
-				"label": ["Afiliation", "Role", "Gender"],
-				"gephiCol": ["affiliation",  "role", "gender"],
-				"keepNeighbors": [true, false, false]
-				},
-	"color_by": {
-				"label": "Color by",
-				"gephiCol": ["gender"]
-				},
-	"compare_by": {
-				"label": "Compare by",
-				"gephiCol": ["gender"]
-				},
-	"merge_by": {
-				"label": "Merge by",
-				"gephiCol": ["gender"]
-				},
-	"size_by": ["original", "degree", "indegree", "outdegree"],
-	"details_view": {
-				"label": ["Role", "Gender", "Source", "CVR", "BIQ", "Deskription"],
-				"gephiCol": ["role", "gender", "source", "cvr", "biq", "description"],
-				"keepNeighbors": true
-				}
-	},
-"graph2":
+"graph1":
 	{
 	"graph_header": "Twitter politik",
 	"basemap": "data/november_med_partier.gexf",
-	"logo_url": "data/november_med_partier.png",
+	"logo_url": "",
 	"spatilize": false,
 	"filter_by": {
 				"label": ["Parti", "Name", "ID"],
@@ -76,8 +41,75 @@
 	"size_by": ["original", "degree", "indegree", "outdegree"],
 	"details_view": {
 				"label": ["Location", "Timezone", "connections"],
-				"gephiCol": ["location", "from_user_timezone", "connections"],
-				"keepNeighbors": true
+				"gephiCol": ["location", "from_user_timezone", "connections"]
 				}
-	}
+	},
+	"graph2":
+	{
+	"graph_header": "Person-to-Person",
+	"basemap": "data/elite.gexf",
+	"logo_url": "",
+	"spatilize": false,
+	"filter_by": {
+				"label": ["Sector", "Name", "Role", "Afiliation"],
+				"gephiCol": [["tags"], "name", "role", "affiliation"],
+				"keepNeighbors": [false, true, false, true]
+				},
+	"highlight_by": {
+				"label": ["Afiliation", "Role", "Gender"],
+				"gephiCol": ["affiliation",  "role", "gender"],
+				"keepNeighbors": [true, false, false]
+				},
+	"color_by": {
+				"label": "Color by",
+				"gephiCol": ["gender"]
+				},
+	"compare_by": {
+				"label": "Compare by",
+				"gephiCol": ["gender"]
+				},
+	"merge_by": {
+				"label": "Merge by",
+				"gephiCol": ["gender"]
+				},
+	"size_by": ["original", "degree"],
+	"details_view": {
+				"label": ["Name", "Primary afiliation", "Position", "Sectors", "Connections", "Source", "CVR", "BIQ"],
+				"gephiCol": ["name", "affiliation", "role" , ["tags"], "connections", "source", "cvr", "biq_link"]
+				}
+	}, 
+	"graph3":
+		{
+		"graph_header": "IPCC - Experiment",
+		"basemap": "data/ipcc.gexf",
+		"logo_url": "",
+		"spatilize": false,
+		"filter_by": {
+					"label": ["Author", "Country", "Role", "Chapter", "Assessment Report", "Working group"],
+					"gephiCol": ["authors_name", ["country_name"], ["role"], ["chapter"], ["ar"], ["wg"]],
+					"keepNeighbors": [true, true, false, true, false, false]
+					},
+		"highlight_by": {
+					"label": ["Institution", "Role", "Country","Chapter"],
+					"gephiCol": [["institution_name"],  ["role"], ["country_name"],["chapter"]],
+					"keepNeighbors": [true, false, false, false]
+					},
+		"color_by": {
+					"label": "Color by",
+					"gephiCol": ["role", "wg"]
+					},
+		"compare_by": {
+					"label": "Compare by",
+					"gephiCol": ["country_id","wg","ar"]
+					},
+		"merge_by": {
+					"label": "Merge by",
+					"gephiCol": ["institution_name","country_id"]
+					},
+		"size_by": ["original", "degree", "indegree", "outdegree"],
+		"details_view": {
+					"label": ["Author", "Institution", "Country", "Role", "Chapter", "Working group", "Assessment Report"],
+					"gephiCol": ["authors_name", "institution_name", "country_name", "role", "chapter", "wg", "ar"]
+					}
+		}	
 }

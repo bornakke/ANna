@@ -5,11 +5,11 @@ function drawGraph() {
 	window.s = new sigma({ 
 		renderers: [
    	 		{
-      		container: 'sigma-container'
-      		//type: 'canvas' // force it to canvas so that we can get a screenshot. Disable line to go back to webGL.
+      		container: 'sigma-container',
+      		type: 'canvas' // force it to canvas so that we can get a screenshot. Disable line to go back to webGL.
       		}
   		],
-  		settings: {"labelThreshold": 20, "batchEdgesDrawing":true, "hideEdgesOnMove":true, "zoomingRatio":1.7}
+  		settings: {"labelThreshold": 15, "batchEdgesDrawing":true, "hideEdgesOnMove":true, "zoomingRatio":2, "drawEdges":false}
   	});
   	
 	//Parse data
@@ -82,6 +82,22 @@ function drawGraph() {
         // node and edge with its original color.
         s.bind('clickStage', function(e) {
             performSearch();
+        });
+        
+        //Only render edges, when you are showing many nodes.
+        s.renderers[0].bind('render', function(e) {
+        	var render = s.renderers[0];
+        	var camera = s.cameras[0]; 
+        	var nodeslength = camera.quadtree.area(camera.getRectangle(render.width, render.height)).filter(function(n){
+        		return !n.hidden;
+        	}).length;
+        	
+        	if(nodeslength > 2000){
+        		s.settings({drawEdges:false});
+        	}
+        	else{
+        		s.settings({drawEdges:true});
+        	}
         });
 		    		
 	//Create canvasSize object
@@ -162,7 +178,6 @@ function createMultiSelect(filterName, filterObject){
 	var selectValues = getSearchterms(filterObject); 
 	
 	Object.keys(selectValues).forEach(function(gephiCol, i){
-		//console.log(filterName);
 		//console.log(selectValues[filterName]);
 	
 		$("#"+filterName+"_container").append('<div><label for="'+filterName+'_'+gephiCol+'">'+filterObject.label[i]+'</label><select id="'+filterName+'_'+gephiCol+'" class="chosen-select" multiple="true"></div>');
@@ -318,25 +333,38 @@ function createRadio(by){
 function getSearchterms(filterObject){ 
 	var selectValues = {};
 	
-	//if(_by.gephiCol[0] != ""){ //IS the filter active Sandsynligvis ligegyldig, da for løkken gerne skulle løse problemet.
+	if(filterObject.gephiCol[0] != ""){ //IS the filter active
 	
-	//Run trough all Gephicol for the filter and then through nodes. Save the filter values in seperate objects for later manipulation
-	for (i = 0; i < filterObject.gephiCol.length; i++) { //Run through the gephiCol of filterObject
-		selectValues[filterObject.gephiCol[i]] = new Array(); //Prepare Array
-		
-		s.graph.nodes().forEach(function(n) { //Now run through all node for every filter of filterObject type
-			if(n.attributes[filterObject.gephiCol[i]]){ //Is this filter in this node and not udefined				
-				selectValues[filterObject.gephiCol[i]].push(n.attributes[filterObject.gephiCol[i]]);
-			} else if(filterObject.gephiCol[i] == "id" || filterObject.gephiCol[i] == "label") {//Special case
-				selectValues[filterObject.gephiCol[i]].push(n[filterObject.gephiCol[i]]);
+		//Run trough all Gephicol for the filter and then through nodes. Save the filter values in seperate objects for later manipulation
+		for (i = 0; i < filterObject.gephiCol.length; i++) { //Run through the gephiCol of filterObject
+			selectValues[filterObject.gephiCol[i]] = new Array(); //Prepare Array
+			if(_.isArray(filterObject.gephiCol[i])){ //Are this Gephicol a nested array
+				
+				s.graph.nodes().forEach(function(n) { //Now run through all node for every filter of filterObject type
+					if(n.attributes[filterObject.gephiCol[i]]){ //Is this filter in this node and not udefined
+						var terms = n.attributes[filterObject.gephiCol[i]].split("|");
+						selectValues[filterObject.gephiCol[i]] = selectValues[filterObject.gephiCol[i]].concat(terms);
+					}
+					
+				});
+				//Trim to make sure spaces is not a problem
+				selectValues[filterObject.gephiCol[i]] = selectValues[filterObject.gephiCol[i]].map(function(value){return value.trim();});
 			}
-		});
-		
-		//Prepare the list for population by sorting the list
-		selectValues[filterObject.gephiCol[i]] = selectValues[filterObject.gephiCol[i]].sort(); 
-		selectValues[filterObject.gephiCol[i]] = _.uniq(selectValues[filterObject.gephiCol[i]], true); //...And removing all duplicates 
+			else{		
+				s.graph.nodes().forEach(function(n) { //Now run through all node for every filter of filterObject type
+					if(n.attributes[filterObject.gephiCol[i]]){ //Is this filter in this node and not udefined				
+						selectValues[filterObject.gephiCol[i]].push(n.attributes[filterObject.gephiCol[i]]);
+					} else if(filterObject.gephiCol[i] == "id" || filterObject.gephiCol[i] == "label") {//Special case
+						selectValues[filterObject.gephiCol[i]].push(n[filterObject.gephiCol[i]]);
+					}
+				});
+			}
+			
+			//Prepare the list for population by sorting the list
+			selectValues[filterObject.gephiCol[i]] = selectValues[filterObject.gephiCol[i]].sort(); 
+			selectValues[filterObject.gephiCol[i]] = _.uniq(selectValues[filterObject.gephiCol[i]], true); //...And removing all duplicates 
+		}
 	}
-	//}
 	return selectValues;
 }
 
@@ -359,8 +387,26 @@ function getIds(gephiCol, selector, keepNeighbors, nodes){
 	
 	if(values[0] != null){ //Only continue if we actually applied this filter
 		nodes.forEach(function(n) {
-			if(!_.isUndefined(n.attributes[gephiCol])){ //Make sure that the node has a value
-				if(($.inArray(n.attributes[gephiCol], values )) > -1){
+			//Make sure that the node has a value
+			if(!_.isUndefined(n.attributes[gephiCol])){ 
+				
+				if(_.isArray(gephiCol)){ //Are this Gephicol a nested array do an extra foreach on the terms
+					var terms = n.attributes[gephiCol].split("|");
+				 	//Trim to make sure spaces is not a problem
+					terms = terms.map(function(value){return value.trim();});
+
+				 	terms.forEach(function(term){
+				 		if(($.inArray(term, values )) > -1){
+				 			Ids.push(n.id);
+				 			if(keepNeighbors == true){ //Check if we should keepNeighbors and add them to the list
+  								Object.keys(s.graph.neighbors(n.id)).forEach(function(neighbor){
+  									Ids.push(neighbor);
+  								});
+  							}	
+				 		}
+				 	});
+				}
+				else if(($.inArray(n.attributes[gephiCol], values )) > -1){
   					Ids.push(n.id);	
  	 				if(keepNeighbors == true){ //Check if we should keepNeighbors and add them to the list
   						Object.keys(s.graph.neighbors(n.id)).forEach(function(neighbor){
@@ -484,21 +530,26 @@ function performSearch() {
 						s.graph.addNode(node);
   						keepNodes.push(node);
 					}
-					for(var i = 0; i < unique_attributes.length; i++) { //Has to split in to so edges can be drawn	
+					
+					for(var i = 0; i < unique_attributes.length; i++) { //Has to split in two so edges can be drawn	
   						to_connect = _.uniq(edges[unique_attributes[i]], false); //...And removing all duplicates			
+  						console.log(to_connect);
   						to_connect.forEach(function(node_target){  	
-  							node_target = node_target.replace(/[^A-Z0-9]/ig, "_");						
+  							console.log(to_connect);
+  							//Protection against attributes with _ in their name.
+  							node_target = node_target.replace(/[^A-Z0-9]/ig, "_");					
   							source = unique_attributes[i].replace(/[^A-Z0-9]/ig, "_");
+  							
   							s.graph.addEdge({
-  							id:'s'+i+'',
-  							target:node_target,
-  							source:unique_attributes[i],
-  							type: "merge_by"				
+								id:''+node_target+'_'+source+'',
+								target:node_target,
+								source:source,
+								type: "merge_by"				
   							});
 						});
 					}
 					s.settings({autoRescale: false, scalingMode:"outside"});
-					s.startForceAtlas2({linLogMode:true, outboundAttractionDistribution:true, barnesHutOptimize:true, scalingRatio:10});
+					s.startForceAtlas2({linLogMode:true, outboundAttractionDistribution:true, barnesHutOptimize:true, scalingRatio:20});
 					setTimeout(function(){s.stopForceAtlas2(); },1000);
 					disableFilters(["compare_by"]);
 				}
@@ -590,7 +641,7 @@ function performSearch() {
 				for(var i = 0; i < unique_attributes.length; i++) {
 					xPostions[unique_attributes[i]] = canvasXStart + (i * spreadingX);
 					yPostions[unique_attributes[i]] = canvasYStart;
-					
+
 					//Add label nodes
 					s.graph.addNode({
   						id: 'n'+i+'',
@@ -625,6 +676,6 @@ function performSearch() {
 			}
 		}
 	}
-	
+	s.render();
     s.refresh();
 }
