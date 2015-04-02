@@ -64,27 +64,31 @@
       		$( "#dialog" ).dialog( "open" );
     	});
     	
+    	
     	$.getJSON( "ini.json")
 	   	 	.done(function(data) {
     			window.globalsettings = data.globalsettings;
     			selectGraph(data);
-    			$("#titel").text(globalsettings.header);
-    			
+    			$("#titel").text(globalsettings.header);	
+    			var mode = 0;
+    			 
     			if(!("graph2" in data)){
-    				window.graph = "graph1";    			
+    				window.graph = "graph1";
+    				mode = 1;
     			}
+				
     			if(window.graph != ""){//Load specific graph
-	    			 $( '.ui-dialog-titlebar-close')[0].style.display = 'inline';			    
-    			    window.ini = data[window.graph];
-    				$("#graph_changer").text(ini.graph_header);
+	    			window.ini = data[window.graph];
+    				enableGraphChanger(mode);
+
     				if(globalsettings.logo != "" & globalsettings.url != ""){
 	    				changeLogo(globalsettings.logo, globalsettings.url);
 	    			}
     				drawGraph();
     			}
     			else{
-	    			$( '.ui-dialog-titlebar-close')[0].style.display = 'none';
-	    			//load select network page
+    				//load select network page
+					enableGraphChanger(2);    			
 	    			$( "#dialog" ).dialog( "open" );
 	    		}
    	 		})
@@ -104,7 +108,6 @@
 			<div class="page-header col-md-9">
 				<h1>
 				<span id="titel"></span>
-				<small><a id="graph_changer" href="#"></a><span class="glyphicon glyphicon-book"></span></small>
 				</h1>
 			</div>
 			

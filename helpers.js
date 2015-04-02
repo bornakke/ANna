@@ -1,3 +1,38 @@
+//3 modes: 0 = show titel with link, 1: hide link, but show titel, 2: graph not loaded.
+function enableGraphChanger(mode){
+	//Graph changer
+	$( "#dialog" ).dialog({
+    	modal: true,
+      	width: 500,
+      	autoOpen: false,
+      	show: {
+		effect: "blind",
+			duration: 500
+		},
+		hide: {
+			effect: "explode",
+			duration: 500
+		}
+	});
+	
+	if(mode != 2){ //Add subtitel	
+		if(mode == 1){
+    		$("#titel").append(' <small> - '+window.ini.graph_header+'</small>');	
+		}
+		else{
+			$("#titel").append('<small> - <a id="graph_changer" href="#">'+window.ini.graph_header+'</a><span class="glyphicon glyphicon-book"></span></small>');
+    	}
+		$( '.ui-dialog-titlebar-close')[0].style.display = 'inline';
+	}
+	else{ //Hide close button	
+			$( '.ui-dialog-titlebar-close')[0].style.display = 'none';
+	}	
+    
+	$( "#graph_changer" ).click(function() {
+    	$( "#dialog" ).dialog( "open" );
+    });
+}
+
 function changeLogo(logo, url){
 	$("#logos").hide();
 	$("#footer").append('<div class="col-md-2 col-md-offset-2 bottom-row-item"><p><i><small>A production by:</small></i></p><a id="logo_generic" href="'+url+'" target="_blank" class="bottom-row-brand "><img height="50px" src="'+logo+'"></a></div></div>');			
