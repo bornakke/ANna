@@ -6,10 +6,10 @@ function drawGraph() {
 		renderers: [
    	 		{
       		container: 'sigma-container',
-      		type: 'canvas' // force it to canvas so that we can get a screenshot. Disable line to go back to webGL.
+      		type: 'canvas' // force it to canvas so that we get nice highlights, edgeHover and the posibilty to take screenshot. Disable line to go back to webGL, fast rendering
       		}
   		],
-  		settings: {"labelThreshold": 15, "batchEdgesDrawing":true, "hideEdgesOnMove":true, "zoomingRatio":2, "drawEdges":false}
+  		settings: {"labelThreshold": 15, "batchEdgesDrawing":true, "hideEdgesOnMove":true, "zoomingRatio":2, "drawEdges":false, "drawEdgeLabels":true, "enableEdgeHovering":false}
   	});
   	
 	//Parse data
@@ -42,6 +42,10 @@ function drawGraph() {
         });
 
 		graph.edges.forEach(function(e) {
+            e.hover_color = '#000';
+            //e.label = "hej2";
+            e.orgLabel = e.label;
+            e.label = null;
             if(_.isUndefined(e.color)){
             	e.color = "#C0C0C0";
             }
@@ -51,23 +55,42 @@ function drawGraph() {
 
 		//Connect instance with the imported graph. From here S is the place to start rather than graph
 		s.graph.read(graph);
+		
+		//Bind Click edge
+		s.bind('clickEdge doubleClickEdge rightClickEdge', function(e) {
+			resetView(); //Reset view and sustain search criterias
+			e.data.edge.color = "#000";
+			e.data.edge.label = e.data.edge.orgLabel
+			s.refresh();
+		});
 
 		//Bind clickNode to highlight  
         s.bind('clickNode', function(e) {
             if(window.ini.details_view.gephiCol[0] != ""){ //Do we actually want to show details
             	performSearch(); //Reset view and sustain search criterias
+            	var connectingEdge;
             	var node = e.data.node;
-            	node.color = "rgb(255,255,255)";
+            	var highlightColor = "rgb(255,255,255)";
+            	node.color = highlightColor;
             	node.type = "highlight";
 	            var neighbors = s.graph.neighbors(node.id);
-            		
+
 	            //if set in ini keep also neighboors 
     	        if(window.ini.details_view.keepNeighbors == true){
         	    	Object.keys(neighbors).forEach(function(key){
-            			neighbors[key].color = "rgb(255,255,255)";
+            			neighbors[key].color = highlightColor;
             			neighbors[key].type = "highlight";
+						
+						//Color Connecting edges
+            			connectingEdge = s.graph.neighborEdges(node.id, neighbors[key].id);
+            			Object.keys(connectingEdge).forEach(function(key){
+            				connectingEdge[key].color = highlightColor;
+            			});
             		});
             	}
+
+	
+
     		
     			$("#sigma-container").css("background-color", "#d9d3be");
 
@@ -80,7 +103,7 @@ function drawGraph() {
 		////////////////////////////////////////////////////////////////////////
         // When the stage is clicked, we just color each
         // node and edge with its original color.
-        s.bind('clickStage', function(e) {
+        s.bind('clickStage doubleClickStage rightClickStage', function(e) {
             performSearch();
         });
         

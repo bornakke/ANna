@@ -85,13 +85,14 @@ function calCanvassize(){
 
 //Reset view everytime we do a search
 function resetView(){
-	//First remove all edges that have been added
+	//First remove all edges that have been added and change color and label back
 	s.graph.edges().forEach(function(e) {
 		if(e.type == "merge_by"){
 			s.graph.dropEdge(e.id);
 		}
-		else{
+		else{ //
             e.color = e.originalColor;
+            e.label = "";
         }
     });
 
@@ -442,3 +443,10 @@ sigma.classes.graph.addMethod('neighbors', function(nodeId) {
     return neighbors;
 });
 
+sigma.classes.graph.addMethod('neighborEdges', function(nodeId1, nodeId2) {
+	var k;
+	var neighbors = {};
+	var index = this.allNeighborsIndex[nodeId1][nodeId2] || {};
+
+	return index;
+});
