@@ -36,13 +36,13 @@
 
     <!-- Global state -->
     <script type="text/javascript">
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    /*(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
   	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
   	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
 	ga('create', 'UA-60418603-1', 'auto');
-  	ga('send', 'pageview');
+  	ga('send', 'pageview');*/
   	
   	//////////////
     //Load data
@@ -130,7 +130,7 @@
         	<div id="sigma-container" class="col-md-10">
         		<div class="col.md-1 leftButtons">
         			<div id="resetcamera" >
-						<button type="button" class="btn btn-default" aria-label="Reset camera" onclick="resetCamera(); performSearch(); this.blur();">
+						<button type="button" class="btn btn-default" aria-label="Reset camera" onclick="resetCamera(); performSearch({skipIndexation:false}); this.blur();">
   							<span class="glyphicon glyphicon-repeat" aria-hidden="true"></span> Reset view
 						</button>
 					</div>

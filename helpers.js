@@ -313,9 +313,10 @@ function fillDetails(node, neighbors){
 //Remove spaces from window ini file 
 function removeSpaces(filters){	
 	filters.forEach(function(filter){
-		window.ini[filter].gephiCol.forEach(function(value, i){
-			if(!_.isArray(value)){
-			window.ini[filter].gephiCol[i] = value.replace(/ /g,"_");
+		window.ini[filter].forEach(function(line, i){
+			if(!_.isArray(line.gephiCol)){
+				
+				window.ini[filter][i].gephiCol = line.gephiCol.replace(/ /g,"_");
 			}
 			/*if(window.ini[filter].gephiCol[i] == "label"){
 				window.ini[filter].gephiCol[i] = "labelBug";
@@ -386,9 +387,10 @@ function getUniquetype(nodes, attribute){
 
 //Returns dropdown for singleSelect filter 
 function getDropdown(_by){
+	
 	var dropdown = [];
-	for (i = 0; i < _by.gephiCol.length; i++) { //Then run through the filters of _by type
-		dropdown.push(_by.gephiCol[i]);
+	for (i = 0; i < _by.length; i++) { //Then run through the filters of _by type
+		dropdown.push(_by[i].gephiCol);
 	}
 	return dropdown;
 }
