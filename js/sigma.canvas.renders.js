@@ -12,11 +12,16 @@ sigma.webgl.nodes.onlylabel = {addNode: function() {}, render: function() {}, in
    */
   sigma.canvas.nodes.highlight = function(node, context, settings) {
     var prefix = settings('prefix') || '';
-
-    context.fillStyle = '#FFFFFF'
+	
+	var color = '#FFFFFF';
+	if("colorNumber" in node){
+		color = color_highlights[node.colorNumber];
+	}       
+    
+    context.fillStyle = color;
     context.shadowColor = '#FFFF00';
     context.shadowBlur = node[prefix + 'size']*2;
-	context.strokeStyle = '#FFFFFF';
+	context.strokeStyle = color;
     context.beginPath();  
     context.arc(
       node[prefix + 'x'],

@@ -17,10 +17,10 @@ function enableGraphChanger(mode){
 	
 	if(mode != 2){ //Add subtitel	
 		if(mode == 1){
-    		$("#titel").append(' <small> - '+window.ini.graph_header+'</small>');	
+    		$("#titel").append(' <small> - '+ini.graph_header+'</small>');	
 		}
 		else{
-			$("#titel").append('<small> - <a id="graph_changer" href="#">'+window.ini.graph_header+'</a><span class="glyphicon glyphicon-book"></span></small>');
+			$("#titel").append('<small> - <a id="graph_changer" href="#">'+ini.graph_header+'</a><span class="glyphicon glyphicon-book"></span></small>');
     	}
 		$( '.ui-dialog-titlebar-close')[0].style.display = 'inline';
 	}
@@ -123,7 +123,7 @@ function resetCamera(){
 	var camera = s.camera;
     sigma.misc.animation.camera(
       camera,
-      {x: window.canvasSize.cameraX, y: 0, angle: 0, ratio: 1},
+      {x: canvasSize.cameraX, y: 0, angle: 0, ratio: 1},
       {duration: 250}
     );
 }
@@ -187,8 +187,8 @@ function captureCanvas(){
 	var img    = canvases[3].toDataURL();
 	var html = '<img src="'+img+'"/>';
 
-	var height = window.canvasSize.height+50;
-	var width = window.canvasSize.width+50;
+	var height = canvasSize.height+50;
+	var width = canvasSize.width+50;
 	var popupWindow = window.open("","","menubar=0,scrollbars=0,height="+height+",width="+width+"");
 	
 	console.log(html);
@@ -293,18 +293,17 @@ function normalize(values){
 
 //Fill the detail info box
 function fillDetails(node, neighbors){
-	var gephiCols = window.ini.details_view.gephiCol;
-	var labels = window.ini.details_view.label;
-	gephiCols.forEach(function(col, i){
+	var container = ini.details_view;
+	container.forEach(function(info, i){
 		if(i == 0){
-			$("#details_view").html('<strong>'+node.attributes[col]+'</strong><br>');
+			$("#details_view").html('<strong>'+node.attributes[info.gephiCol]+'</strong><br>');
 		}
-		else if(col == "connections"){
+		else if(info.gephiCol == "connections"){
 			var connections = Object.keys(neighbors).length;
-			$("#details_view").append(''+labels[i]+': '+connections+'<br>');
+			$("#details_view").append(''+info.label+': '+connections+'<br>');
 		}
 		else{
-			$("#details_view").append(''+labels[i]+': '+node.attributes[col]+'<br>');
+			$("#details_view").append(''+info.label+': '+node.attributes[info.gephiCol]+'<br>');
 		}
 	});
 	$("#details_view").show( );
@@ -313,14 +312,11 @@ function fillDetails(node, neighbors){
 //Remove spaces from window ini file 
 function removeSpaces(filters){	
 	filters.forEach(function(filter){
-		window.ini[filter].forEach(function(line, i){
+		ini[filter].forEach(function(line, i){
 			if(!_.isArray(line.gephiCol)){
 				
-				window.ini[filter][i].gephiCol = line.gephiCol.replace(/ /g,"_");
+				ini[filter][i].gephiCol = line.gephiCol.replace(/ /g,"_");
 			}
-			/*if(window.ini[filter].gephiCol[i] == "label"){
-				window.ini[filter].gephiCol[i] = "labelBug";
-			}*/
 		});
 	});
 }

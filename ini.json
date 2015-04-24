@@ -3,7 +3,7 @@
  	{
  	"header": "ANna",
  	"captures": {
- 			"savetoSVG": true,
+ 			"savetoSVG": false,
  			"savetoCanvas": true,
  			"embedSigma": true
  			},
@@ -14,6 +14,7 @@
 	{
 	"graph_header": "Twitter politik",
 	"basemap": "data/november_med_partier.gexf",
+	"render": "canvas",
 	"logo_url": "",
 	"spatilize": false,
 	"filter_by":[
@@ -21,8 +22,8 @@
 				{"label": "Name", "gephiCol": "label", "keepNeighbors": true}
 				],
 	"highlight_by":[
-				{"label": "Parti", "gephiCol": "parti", "keepNeighbors": true},
-				{"label": "Name", "gephiCol": "label", "keepNeighbors": true}
+				{"label": "Parti", "gephiCol": "parti", "keepNeighbors": true, "multicolor": true},
+				{"label": "Name", "gephiCol": "label", "keepNeighbors": true, "multicolor": false}
 				],
 	"merge_by":[
 				{"label": "Merge by", "gephiCol": ["type", "from_user_timezone"]}

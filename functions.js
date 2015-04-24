@@ -5,16 +5,16 @@ function drawGraph() {
 	window.s = new sigma({ 
 		renderers: [
    	 		{
-      		container: 'sigma-container',
-      		type: 'canvas' // force it to canvas so that we get nice highlights, edgeHover and the posibilty to take screenshot. Disable line to go back to webGL, fast rendering
+      		container: 'sigma-container'
+      		//type: 'canvas' // force it to canvas so that we get nice highlights, edgeHover and the posibilty to take screenshot. Disable line to go back to webGL, fast rendering
       		}
-  		],
+  		]
   		//enableEdgeHovering disabled due to it being a heavy burden on selecting nodes. 
-  		settings: {"labelThreshold": 15, "batchEdgesDrawing":true, "hideEdgesOnMove":true, "zoomingRatio":2, "drawEdges":false, "drawEdgeLabels":true, "enableEdgeHovering":false}
+  		//settings: {"labelThreshold": 15, "batchEdgesDrawing":true, "hideEdgesOnMove":true, "zoomingRatio":2, "drawEdges":false, "drawEdgeLabels":false, "enableEdgeHovering":false}
   	});
   	
 	//Parse data
-    sigma.parsers.gexf(window.ini.basemap, function(graph) {
+    sigma.parsers.gexf(ini.basemap, function(graph) {
 		
 		//Change the id of attributes to its titel to secure compatibility with gephi
 		//First build a list to compare with
@@ -67,38 +67,38 @@ function drawGraph() {
 
 		//Bind clickNode to highlight  
         s.bind('clickNode', function(e) {
-            if(window.ini.details_view.gephiCol[0] != ""){ //Do we actually want to show details
-            	performSearch({skipIndexation:true}); //Reset view and sustain search criterias
-            	var connectingEdge;
-            	var node = e.data.node;
-            	var highlightColor = "rgb(255,255,255)";
-            	node.color = highlightColor;
-            	node.type = "highlight";
-	            var neighbors = s.graph.neighbors(node.id);
+            performSearch({skipIndexation:true}); //Reset view and sustain search criterias
+            var connectingEdge;
+            var node = e.data.node;
+            var highlightColor = "rgb(255,255,255)";
+        	node.color = highlightColor;
+            node.type = "highlight";
+	        var neighbors = s.graph.neighbors(node.id);
 
-	            //if set in ini keep also neighboors 
-    	        if(window.ini.details_view.keepNeighbors == true){
-        	    	Object.keys(neighbors).forEach(function(key){
-            			neighbors[key].color = highlightColor;
-            			neighbors[key].type = "highlight";
+	        //if set in ini keep also neighboors 
+    	    if(ini.details_view[0].keepNeighbors == true){
+        		Object.keys(neighbors).forEach(function(key){
+            		neighbors[key].color = highlightColor;
+            		neighbors[key].type = "highlight";
 						
-						//Color Connecting edges
-            			connectingEdge = s.graph.neighborEdges(node.id, neighbors[key].id);
-            			Object.keys(connectingEdge).forEach(function(key){
-            				connectingEdge[key].color = highlightColor;
-            			});
+					//Color Connecting edges
+            		connectingEdge = s.graph.neighborEdges(node.id, neighbors[key].id);
+            		Object.keys(connectingEdge).forEach(function(key){
+            			connectingEdge[key].color = highlightColor;
             		});
-            	}
+            	});
+            }
 
 	
 
     		
-    			$("#sigma-container").css("background-color", "#d9d3be");
+    		$("#sigma-container").css("background-color", "#d9d3be");
 
+    		if(ini.details_view[0].gephiCol != ""){ //Do we actually want to show details
     			fillDetails(node,neighbors);
+    		}
             
-            	s.refresh({ skipIndexation: true });
-            }
+            s.refresh({ skipIndexation: true });
 		});
 		
 		////////////////////////////////////////////////////////////////////////
@@ -155,11 +155,11 @@ function createInterface(){
 	
 	//Hide non-activated captures
 	activateCapture();
-	createMultiSelect("filter_by", window.ini["filter_by"]);
-	createGroupedMultiSelect("highlight_by", window.ini["highlight_by"]);
-	createSingleSelect("color_by", window.ini["color_by"]);
-	createSingleSelect("compare_by", window.ini["compare_by"]);
-	createSingleSelect("merge_by", window.ini["merge_by"]);
+	createMultiSelect("filter_by", ini["filter_by"]);
+	createGroupedMultiSelect("highlight_by", ini["highlight_by"]);
+	createSingleSelect("color_by", ini["color_by"]);
+	createSingleSelect("compare_by", ini["compare_by"]);
+	createSingleSelect("merge_by", ini["merge_by"]);
 	createRadio("size_by");
 	
 	//Initiate search tab
@@ -215,6 +215,7 @@ function createMultiSelect(filterName, filterObject){
 			
 		//When selecting options, automatically perform search
 		$("#"+filterName+'_'+gephiCol).on('change', function(event, params) {
+    		$("#"+filterName+'_'+gephiCol).trigger("chosen:updated");
     		performSearch({skipIndexation:true});
     	});
     
@@ -270,6 +271,7 @@ function createGroupedMultiSelect(filterName, filterObject){
 		
 		//When selecting terms, automatically perform search
 		$("#"+filterName+"_terms").on('change', function(event, params) {
+    		$("#"+filterName+"_terms").trigger("chosen:updated");
     		performSearch({skipIndexation:true});
     	});
     	
@@ -305,7 +307,7 @@ function createRadio(by){
 		return str.replace(/\b[a-z]/g, function(letter){ return letter.toUpperCase(); });
 	}
 	
-	var buttons = window.ini[by];
+	var buttons = ini[by];
 	buttons.forEach(function(button){
 		$("#"+by+"_container").append('<label for="'+button+'" class="radio-inline"><input type="radio" name="'+by+'_options" id="'+button+'" value="'+button+'">'+firstLetter(button)+'</label>');
 	});
@@ -360,11 +362,13 @@ function getSearchterms(filterObject){
 
 //Get the ID of all nodes that are affected by filter
 function getIds(gephiCol, selector, keepNeighbors, nodes){
+	//Todo remove everything with Ids
 	var Ids = [];
 	var values = selector.val();
 	
 	if(!(_.isArray(values))) //When dealing with single select there is only one value and therefore no array.
 		var values = [values];
+
 		
 	if(gephiCol == "labelBug") //Bug in Chossen
   			gephiCol = "label";
@@ -376,6 +380,10 @@ function getIds(gephiCol, selector, keepNeighbors, nodes){
 	});*/
 	
 	if(values[0] != null){ //Only continue if we actually applied this filter
+		values.forEach(function (value, i){
+			Ids[value] = [];
+		});
+		
 		nodes.forEach(function(n) {
 			//Make sure that the node has a value
 			if(!_.isUndefined(n.attributes[gephiCol])){ 
@@ -384,40 +392,42 @@ function getIds(gephiCol, selector, keepNeighbors, nodes){
 					var terms = n.attributes[gephiCol].split("|");
 				 	//Trim to make sure spaces is not a problem
 					terms = terms.map(function(value){return value.trim();});
-
 				 	terms.forEach(function(term){
 				 		if(($.inArray(term, values )) > -1){
-				 			Ids.push(n.id);
+				 			var position = values[$.inArray(term, values )];
+				 			Ids[position].push(n.id);
 				 			if(keepNeighbors == true){ //Check if we should keepNeighbors and add them to the list
   								Object.keys(s.graph.neighbors(n.id)).forEach(function(neighbor){
-  									Ids.push(neighbor);
+  									Ids[position].push(neighbor);
   								});
   							}	
 				 		}
 				 	});
 				}
 				else if(($.inArray(n.attributes[gephiCol], values )) > -1){
-  					Ids.push(n.id);	
+  					var position = values[$.inArray(n.attributes[gephiCol], values )];
+  					Ids[position].push(n.id);
  	 				if(keepNeighbors == true){ //Check if we should keepNeighbors and add them to the list
   						Object.keys(s.graph.neighbors(n.id)).forEach(function(neighbor){
-  							Ids.push(neighbor);
+  							Ids[position].push(neighbor);
   						});
   					}
   				}
   			}
   			else if(gephiCol == "id" || gephiCol == "label") { //Special case
   				if(($.inArray(n[gephiCol], values )) > -1){
-  					Ids.push(n.id);
+  					var position = values[$.inArray(n[gephiCol], values )];
+  					Ids[position].push(n.id);
   					if(keepNeighbors == true){
   						Object.keys(s.graph.neighbors(n.id)).forEach(function(neighbor){
-  							Ids.push(neighbor);
+  							Ids[position].push(neighbor);
   						});
   					}
   				}
   			}
 		});
 	}
-	return Ids
+	return Ids;
 }
 
 // Make search function available
@@ -433,12 +443,19 @@ function performSearch(options) {
 	var keepNodes_tmp = []; //Array to build list of keep nodes 
 	
 	//Filter
-	var filters = window.ini.filter_by;
+	var filters = ini.filter_by;
 	if(filters[0].gephiCol != ""){ //Do we need to filter
 		filtered_Ids = new Array();
 		filters.forEach(function(filter, i){
 			var selector = $("#filter_by_"+filter.gephiCol+"");
 			var Ids = getIds(filter.gephiCol, selector, filter.keepNeighbors, keepNodes);
+			
+			//Todo: Worked with array but not with object
+			Object.keys(Ids).forEach(function(key){
+				var test = Ids[key]; 
+			});	
+			Ids = _.flatten(Ids); //Flatten the returned since we don't care what were it came from. 
+			
 			if(Ids.length > 0){
 				filtered_Ids.push(Ids);
 			}
@@ -461,7 +478,7 @@ function performSearch(options) {
 	}
 	
 	//Size by
-	filters = window.ini.size_by;
+	filters = ini.size_by;
 	if(filters[0].gephiCol != ""){ //Do we need to size_by? 
 		if(!(_.isEmpty(keepNodes))){ //There are still nodes to resize
 			//var selector = $("#color_by");
@@ -471,7 +488,7 @@ function performSearch(options) {
 	}
 	
 	//Merge_by
-	filters = window.ini.merge_by;
+	filters = ini.merge_by;
 	if(filters[0].gephiCol != ""){ //Do we need to merge_by?
 		if(!(_.isEmpty(keepNodes))){ //There are still nodes to rearrange
 			var selector = $("#merge_by");
@@ -548,7 +565,7 @@ function performSearch(options) {
 		}
 	}
 	//Color by
-	filters = window.ini.color_by;
+	filters = ini.color_by;
 	if(filters[0].gephiCol != ""){ //Do we need to color_by? 
 		if(!(_.isEmpty(keepNodes))){ //There are still nodes to color
 			var selector = $("#color_by");
@@ -575,41 +592,50 @@ function performSearch(options) {
 	
 	//
 	//Highlight 
-	filters = window.ini.highlight_by;
+	filters = ini.highlight_by;
 	if(filters[0].gephiCol != ""){ //Do we need to highlight? 
 		if(!(_.isEmpty(keepNodes))){ //There are still nodes to highlight
 			highlights_Ids = new Array();
 			//gephiCols.forEach(function(gephiCol, i){
 				var gephiCol = $("#highlight_by_category").val();
 				
-				for(var j = 0; j < window.ini.highlight_by.length; j++) {
-					if(window.ini.highlight_by[j].gephiCol == gephiCol | (gephiCol == "labelBug" & window.ini.highlight_by[j].gephiCol == "label")){
+				for(var j = 0; j < ini.highlight_by.length; j++) {
+					if(ini.highlight_by[j].gephiCol == gephiCol | (gephiCol == "labelBug" & ini.highlight_by[j].gephiCol == "label")){
 					var i = j;
 					}
 				}				
 				var selector = $("#highlight_by_terms");
-				var Ids = getIds(gephiCol, selector, window.ini.highlight_by[i].keepNeighbors, keepNodes);
-				if(Ids.length > 0){
-					highlights_Ids.push(Ids);
-				}
+				var Ids = getIds(gephiCol, selector, ini.highlight_by[i].keepNeighbors, keepNodes);
+
 		}
-		if(!(_.isEmpty(highlights_Ids))){ //only run this if we did a highlight 
-			//Now color everything that has not been filtered and save the nodes			
-			var keepIds = _.flatten(highlights_Ids);
-			keepNodes.forEach(function(n) {
-				if(($.inArray(n.id, keepIds )) > -1){
-            		n.color = "rgb(255,255,255)"; //Also done by render, but not if you are in webgl
-            		n.type = "highlight";	            
-				}
+		if(!(_.isEmpty(Ids))){ //only run this if we did a highlight 
+			console.log(Ids);
+			var index  = [];
+			$(".search-choice-close").each(function(){
+				index.push($( this ).data( "option-array-index" ));
 			});
-			console.log(s.renderers);
+			
+			//Now color everything that has not been filtered and save the nodes
+			Ids.forEach(function(bin, i){
+				keepNodes.forEach(function(n){
+					if(($.inArray(n.id, bin )) > -1){
+						n.colorNumber = i; //Also done by render, but not if you are in webgl
+						n.color = color_highlights[i];
+            			n.type = "highlight";
+					}
+				});
+			});
+			
+			
+			var keepIds = _.flatten(highlights_Ids);
+			
 			$("#sigma-container").css("background-color", "#d9d3be");
 		}
 	}	
 	
 	//Compare by
 	//the only one to layout so we keep it last.
-	filters = window.ini.compare_by;
+	filters = ini.compare_by;
 	if(filters[0].gephiCol != ""){ //Do we need to compare_by? 
 		if(!(_.isEmpty(keepNodes))){ //There are still nodes to rearrange
 			var selector = $("#compare_by");
@@ -620,10 +646,10 @@ function performSearch(options) {
 				var xPostions = {};
 				var yPostions = {};
 				var margin = 100; 
-				var canvasXStart = -window.canvasSize.marginWidth/2;
-				var spreadingX = window.canvasSize.extramarginWidth/unique_attributes.length;
+				var canvasXStart = -canvasSize.marginWidth/2;
+				var spreadingX = canvasSize.extramarginWidth/unique_attributes.length;
 
-				var canvasYStart = window.canvasSize.marginHeight/2;
+				var canvasYStart = canvasSize.marginHeight/2;
 				var spreadingY = -10;
 
 				for(var i = 0; i < unique_attributes.length; i++) {
