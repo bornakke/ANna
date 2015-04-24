@@ -47,7 +47,7 @@
   	//////////////
     //Load data
     $(document).ready(function() {
-    	window.graph = getUrlParameter("graph1");
+    	window.graph = getUrlParameter();
     	$('#status').button('loading'); //Set loading sign
     	//Graph changer
     	$( "#dialog" ).dialog({
@@ -75,9 +75,9 @@
     			selectGraph(data);
     			$("#titel").text(globalsettings.header);	
     			var mode = 0;
-    			 
-    			if(!("graph2" in data)){
-    				window.graph = "graph1";
+    			
+    			if(globalsettings.defaultGraph != ""){
+    				window.graph = globalsettings.defaultGraph;
     				mode = 1;
     			}
 				
@@ -131,23 +131,23 @@
         		<div class="col.md-1 leftButtons">
         			<div id="resetcamera" >
 						<button type="button" class="btn btn-default" aria-label="Reset camera" onclick="resetCamera(); performSearch({skipIndexation:false}); this.blur();">
-  							<span class="glyphicon glyphicon-repeat" aria-hidden="true"></span> Reset view
+  							<span class="glyphicon glyphicon-repeat" aria-hidden="true"></span> <span id="resetCameraLabel">Reset view</span>
 						</button>
 					</div>
 
 					<div id="savetoSVG" class="col.md-1 hide">
 						<button type="button" class="btn btn-default" aria-label="Save to SVG" onclick="captureSVG(); this.blur();">
-  							<span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span> Capture SVG
+  							<span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span> <span id="savetoSVGLabel">Capture SVG
 						</button>
 					</div>
 					<div id="savetoCanvas" class="col.md-1 hide">
 						<button type="button" class="btn btn-default" aria-label="Save to Canvas" onclick="captureCanvas(); this.blur();">
-  							<span class="glyphicon glyphicon-picture" aria-hidden="true"></span> Capture Canvas
+  							<span class="glyphicon glyphicon-picture" aria-hidden="true"></span> <span id="savetoCanvasLabel">Capture Canvas
 						</button>
 					</div>
-					<div id="embedSigma" class="col.md-1 hide">
+					<div id="embedNetwork" class="col.md-1 hide">
 						<button type="button" class="btn btn-default" aria-label="Generate an embed code for your current network" onclick="createEmbed(); this.blur();">
-  							<span class="glyphicon glyphicon-link" aria-hidden="true"></span> Embed network
+  							<span class="glyphicon glyphicon-link" aria-hidden="true"></span> <span id="embedNetworkLabel">Embed network
 						</button>
 					</div>
 				</div>
@@ -166,20 +166,20 @@
 			  		</div>
 			  		<div class="tab-content">
     					<div role="tabpanel" class="tab-pane active" id="size">
-    						<div id="size_by_container" class="contain"></div>
+    						<div id="size_by_container" class="contain hide"></div>
     					</div>
     					<div role="tabpanel" class="tab-pane" id="color">
-    						<div id="color_by_container" ><span class="glyphicon glyphicon-erase"></span></div>
-    						<div id="highlight_by_container" class="contain">
+    						<div id="color_by_container" class="contain hide"><span class="glyphicon glyphicon-erase"></span></div>
+    						<div id="highlight_by_container" class="hide">
 	    					    <div class="filter_header"><span class="glyphicon glyphicon-pushpin"></span> Highlight:</div>
     					    </div>
     					</div>
     					<div role="tabpanel" class="tab-pane" id="layout">
-    						<div id="merge_by_container"><span class="glyphicon glyphicon-qrcode"></div>
-    						<div id="compare_by_container" class="contain"><span class="glyphicon glyphicon-stats"></div>
+    						<div id="merge_by_container" class="contain hide"><span class="glyphicon glyphicon-qrcode"></div>
+    						<div id="compare_by_container" class="hide"><span class="glyphicon glyphicon-stats"></div>
     					</div>
     					<div role="tabpanel" class="tab-pane" id="search">
-    						<div id="filter_by_container" class="filter_container">
+    						<div id="filter_by_container" class="filter_container hide">
     							<div class="filter_header"><span class="glyphicon glyphicon-filter"></span> Filter:</div>
     						</div>
     					</div>

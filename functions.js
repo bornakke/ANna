@@ -5,8 +5,8 @@ function drawGraph() {
 	window.s = new sigma({ 
 		renderers: [
    	 		{
-      		container: 'sigma-container'
-      		//type: 'canvas' // force it to canvas so that we get nice highlights, edgeHover and the posibilty to take screenshot. Disable line to go back to webGL, fast rendering
+      		container: 'sigma-container',
+      		type: ini.render // force it to canvas so that we get nice highlights, edgeHover and the posibilty to take screenshot. Disable line to go back to webGL, fast rendering
       		}
   		]
   		//enableEdgeHovering disabled due to it being a heavy burden on selecting nodes. 
@@ -139,6 +139,8 @@ function drawGraph() {
 	s.refresh();
 	
 	createInterface();
+	
+	translate();
 	
 	updateStatus("complete");
     });
@@ -303,22 +305,21 @@ function createGroupedMultiSelect(filterName, filterObject){
 
 //Populate navigation with radiobuttons
 function createRadio(by){
-	var firstLetter = function(str) {
-		return str.replace(/\b[a-z]/g, function(letter){ return letter.toUpperCase(); });
-	}
-	
 	var buttons = ini[by];
-	buttons.forEach(function(button){
-		$("#"+by+"_container").append('<label for="'+button+'" class="radio-inline"><input type="radio" name="'+by+'_options" id="'+button+'" value="'+button+'">'+firstLetter(button)+'</label>');
-	});
-	$("#"+by+"_container").append('<p class="text-info">The layout is usually cleaner when most connected nodes are bigger. The degree is the number of links, the indegree (outdegree) is the number of inbound links (outbound). </p>');
+	console.log(buttons);
+	if(buttons[0] != ""){
+		buttons.forEach(function(button){
+			$("#"+by+"_container").append('<label for="'+button+'" class="radio-inline"><input type="radio" name="'+by+'_options" id="'+button+'" value="'+button+'">'+capFirstletter(button)+'</label>');
+		});
+		$("#"+by+"_container").append('<p class="text-info">The layout is usually cleaner when most connected nodes are bigger. The degree is the number of links, the indegree (outdegree) is the number of inbound links (outbound). </p>');
 	
-	//When selecting options, automatically perform search
-	$("#"+by+"_container").on('change', function(event, params) {
+		//When selecting options, automatically perform search
+		$("#"+by+"_container").on('change', function(event, params) {
     		performSearch({skipIndexation:false});
-    });
+    	});
 	
-	showMenu(by);
+		showMenu(by);
+	}
 }
 
 //Prepare the navigation
@@ -359,6 +360,23 @@ function getSearchterms(filterObject){
 	}
 	return selectValues;
 }
+
+//Functions that runs through and translates all buttons etc.
+function translate(){
+	var translations = globalsettings.translation;
+	Object.keys(translations).forEach(function(key){
+		$("#"+key+"Label").text(translations[key]);
+	});
+	/*if(engLabel in translate){
+		return translate[engLabel];
+	}
+	else{
+		return engLabel;
+	}
+	console.log($("#resetCamera").text());*/
+
+}
+
 
 //Get the ID of all nodes that are affected by filter
 function getIds(gephiCol, selector, keepNeighbors, nodes){

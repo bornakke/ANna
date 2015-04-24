@@ -357,7 +357,8 @@ function updateStatus(state) {
 //Show menu
 function showMenu(by){
 	var id = $("#"+by+"_container").parent().attr('id');
-	$("#"+id+"_menu").removeClass('hide')
+	$("#"+by+"_container").removeClass('hide')
+	$("#"+id+"_menu").removeClass('hide');
 }
 
 //Function to extract all unique values for a specific attribute in given set of nodes   
@@ -428,6 +429,20 @@ function degreeSize(option) {
         e.size = 1 + 2 * Math.sqrt(s.graph.degree(e.id, 'out'));
     };
 }*/
+
+function capFirstletter(str){
+			return str.replace(/\b[a-z]/g, function(letter){ return letter.toUpperCase(); });
+}
+
+function translate(engLabel){
+	var translate = globalsettings.translate;
+	if(engLabel in translate){
+		return translate[engLabel];
+	}
+	else{
+		return engLabel;
+	}
+}
 
 //Create helper method for determining neighbor nodes
 sigma.classes.graph.addMethod('neighbors', function(nodeId) {

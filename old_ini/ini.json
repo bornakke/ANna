@@ -3,19 +3,12 @@
  	{
  	"header": "Den Danske Magtelite",
  	"captures": {
- 			"savetoSVG": false, 
+ 			"savetoSVG": false,
  			"savetoCanvas": true,
- 			"embedNetwork": true
+ 			"embedSigma": true
  			},
- 	"defaultGraph": "graph1",
  	"logo": "",
- 	"url": "",
- 	"translation": {
- 			"resetCamera": "Centrer",
- 			"savetoSVG": "Gem til SVG", 
- 			"savetoCanvas": "Screenshot",
- 			"embedNetwork": "Embed netværk"
- 			}
+ 	"url": ""
  	},
 "graph1":
 	{
@@ -33,21 +26,21 @@
 				{"label": "Name", "gephiCol": "label", "keepNeighbors": true, "multicolor": false}
 				],
 	"merge_by":[
-				{"label": "Merge by", "gephiCol": [""]}
+				{"label": "Merge by", "gephiCol": ["type", "from_user_timezone"]}
 			   ],
 	"compare_by":[
-				{"label": "Color by", "gephiCol": [""]}
+				{"label": "Color by", "gephiCol": ["parti", "type"]}
 			   ],
 	"color_by":[
-				{"label": "Color by", "gephiCol": [""]}
+				{"label": "Color by", "gephiCol": ["parti", "type"]}
 			   ],
 	"size_by":  [
-				""
+				"original", "degree", "indegree", "outdegree"
 				],
 	"details_view":[
-				{"label": "Parti", "gephiCol": ""},
-				{"label": "connections", "gephiCol": ""},
-				{"label": "Timezone", "gephiCol": ""}
+				{"label": "Parti", "gephiCol": "parti"},
+				{"label": "connections", "gephiCol": "connections"},
+				{"label": "Timezone", "gephiCol": "from_user_timezone"}
 				]
 	}
 }
