@@ -14,7 +14,12 @@
  			"resetCamera": "Centrer",
  			"savetoSVG": "Gem til SVG", 
  			"savetoCanvas": "Screenshot",
- 			"embedNetwork": "Embed netværk"
+ 			"embedNetwork": "Embed netværk",
+ 			"status_loading": "Indlæser netværk...",
+ 			"status_complete": "Netværk indlæst.",
+ 			"status_error": "Der er desværre opstået en fejl.",
+ 			"status_embed": "Embed kode genereret.",
+ 			"savetoCanvasModal": "Højre klik og vælg 'Gem billede som...'"
  			}
  	},
 "graph1":

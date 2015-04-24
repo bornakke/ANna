@@ -361,23 +361,6 @@ function getSearchterms(filterObject){
 	return selectValues;
 }
 
-//Functions that runs through and translates all buttons etc.
-function translate(){
-	var translations = globalsettings.translation;
-	Object.keys(translations).forEach(function(key){
-		$("#"+key+"Label").text(translations[key]);
-	});
-	/*if(engLabel in translate){
-		return translate[engLabel];
-	}
-	else{
-		return engLabel;
-	}
-	console.log($("#resetCamera").text());*/
-
-}
-
-
 //Get the ID of all nodes that are affected by filter
 function getIds(gephiCol, selector, keepNeighbors, nodes){
 	//Todo remove everything with Ids

@@ -49,20 +49,6 @@
     $(document).ready(function() {
     	window.graph = getUrlParameter();
     	$('#status').button('loading'); //Set loading sign
-    	//Graph changer
-    	$( "#dialog" ).dialog({
-      		modal: true,
-      		width: 500,
-      		autoOpen: false,
-      		show: {
-        		effect: "blind",
-        		duration: 500
-      		},
-      		hide: {
-        		effect: "explode",
-        		duration: 500
-      		}
-   		 });
     
 		$( "#graph_changer" ).click(function() {
       		$( "#dialog" ).dialog( "open" );
@@ -122,6 +108,8 @@
 			<div id="dialog" title="Select graph">
   				<p>Please chose basic graph to navigate:</p>
   				<div id="graphs"></div>
+  			</div>
+  			<div id="savetoCanvasModal" title="Right click and press 'Save image as...'">
   			</div>
       	</div>
 	  	

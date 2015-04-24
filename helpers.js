@@ -128,28 +128,27 @@ function resetCamera(){
     );
 }
 
-//Reset selected Node
-/*function resetSelected(){
-	//change the sigma background back
-	$("#sigma-container").css("background-color", "#f2f0e9");
-	//hide details view:
-	$("#details_view").hide();
-	s.graph.nodes().forEach(function(n) {
-		if(n.type == "highlight"){
-			n.type = "def";
-			n.color = n.originalColor;
-		}
-	});
-	s.refresh();
-
-}*/
-
 function activateCapture(){
 	Object.keys(globalsettings.captures).forEach(function(key){
 		if(globalsettings.captures[key]){
 			$('#'+key+'').removeClass('hide');
 		}
 	});
+	
+	$( "#savetoCanvasModal" ).dialog({
+    	modal: true,
+      	width: 900,
+      	autoOpen: false,
+      	show: {
+        	effect: "blind",
+        	duration: 500
+      	},
+      	hide: {
+        	effect: "explode",
+        	duration: 500
+      	}
+   	});
+	
 }
 
 //Capture canvas to SVG
@@ -185,15 +184,19 @@ function captureCanvas(){
 	
 	ctx0.drawImage(canvases[4], 0, 0);
 	var img    = canvases[3].toDataURL();
-	var html = '<img src="'+img+'"/>';
+	var html = '<img width="900px" src="'+img+'"/>';
 
 	var height = canvasSize.height+50;
 	var width = canvasSize.width+50;
-	var popupWindow = window.open("","","menubar=0,scrollbars=0,height="+height+",width="+width+"");
-	
-	console.log(html);
-	popupWindow.document.write(html);
-	popupWindow.document.close();
+
+	$( "#savetoCanvasModal" ).empty();	
+	$( "#savetoCanvasModal" ).append(html);
+	$( "#savetoCanvasModal" ).dialog( "open" );
+
+	//From popup to modal
+	//var popupWindow = window.open("","","menubar=0,scrollbars=0,height="+height+",width="+width+"");
+	//popupWindow.document.write(html);
+	//popupWindow.document.close();
 
 	savetoserver("png", img);
 	
@@ -234,6 +237,8 @@ function createEmbed(){
 
 //Save copy to server for monitoring
 var savetoserver = function savetoserver(filetype, data){
+
+
 	if (document.location.hostname != "localhost"){ //We cannot make contact if we are on a localhost
 		var location = window.location.href;
     	location = location.substring(0, location.lastIndexOf('/'));
@@ -266,13 +271,14 @@ function getUrlParameter(sParam){
     for (var i = 0; i < sURLVariables.length; i++) 
     {
         var sParameterName = sURLVariables[i].split('=');
-        if (sParameterName[0] == sParam) 
-        {
+       //Uncomment if you get problem
+       // if (sParameterName[0] == sParam) 
+        //{
             return sParameterName[1];
-        }
-        else{
-        	return "";
-        }
+        //}
+        //else{
+    //    	return "";
+      //  }
     }
 }   
 
@@ -434,14 +440,23 @@ function capFirstletter(str){
 			return str.replace(/\b[a-z]/g, function(letter){ return letter.toUpperCase(); });
 }
 
-function translate(engLabel){
-	var translate = globalsettings.translate;
-	if(engLabel in translate){
-		return translate[engLabel];
-	}
-	else{
-		return engLabel;
-	}
+//Functions that runs through and translates all buttons etc.
+//Should probably be run a little earlier
+function translate(){
+	var translations = globalsettings.translation;
+	Object.keys(translations).forEach(function(key){
+		if(key.indexOf('_') === -1){
+			$("#"+key+"Label").text(translations[key]);
+		}
+		if(key == "savetoCanvasModal"){
+			console.log($( "#ui-id-1" ));
+			$( "#ui-id-1" ).text(translations[key]);
+		}
+		else{ //Status texts
+			var arrayKey = key.split("_");
+			$("#status").data( arrayKey[1]+"-text", translations[key]);
+		}
+	});
 }
 
 //Create helper method for determining neighbor nodes
