@@ -8,9 +8,9 @@ function drawGraph() {
       		container: 'sigma-container',
       		type: ini.render // force it to canvas so that we get nice highlights, edgeHover and the posibilty to take screenshot. Disable line to go back to webGL, fast rendering
       		}
-  		]
+  		],
   		//enableEdgeHovering disabled due to it being a heavy burden on selecting nodes. 
-  		//settings: {"labelThreshold": 15, "batchEdgesDrawing":true, "hideEdgesOnMove":true, "zoomingRatio":2, "drawEdges":false, "drawEdgeLabels":false, "enableEdgeHovering":false}
+  		settings: {"labelThreshold": 15, "batchEdgesDrawing":true, "hideEdgesOnMove":true, "zoomingRatio":2, "drawEdges":false, "drawEdgeLabels":false, "enableEdgeHovering":false, "defaultLabelColor": "#4f4d4d"}
   	});
   	
 	//Parse data
@@ -73,10 +73,11 @@ function drawGraph() {
             var highlightColor = "rgb(255,255,255)";
         	node.color = highlightColor;
             node.type = "highlight";
+	        node.active = true;
 	        var neighbors = s.graph.neighbors(node.id);
 
 	        //if set in ini keep also neighboors 
-    	    if(ini.details_view[0].keepNeighbors == true){
+    	    if(ini.ClickedKeepNeigbors == true){
         		Object.keys(neighbors).forEach(function(key){
             		neighbors[key].color = highlightColor;
             		neighbors[key].type = "highlight";
@@ -306,7 +307,7 @@ function createGroupedMultiSelect(filterName, filterObject){
 //Populate navigation with radiobuttons
 function createRadio(by){
 	var buttons = ini[by];
-	console.log(buttons);
+	//console.log(buttons);
 	if(buttons[0] != ""){
 		buttons.forEach(function(button){
 			$("#"+by+"_container").append('<label for="'+button+'" class="radio-inline"><input type="radio" name="'+by+'_options" id="'+button+'" value="'+button+'">'+capFirstletter(button)+'</label>');
@@ -452,15 +453,17 @@ function performSearch(options) {
 			var Ids = getIds(filter.gephiCol, selector, filter.keepNeighbors, keepNodes);
 			
 			//Todo: Worked with array but not with object
-			Object.keys(Ids).forEach(function(key){
+			/*Object.keys(Ids).forEach(function(key){
 				var test = Ids[key]; 
-			});	
-			Ids = _.flatten(Ids); //Flatten the returned since we don't care what were it came from. 
-			
+			});*/
+			console.log(Ids);
+			filtered_Ids = _.flatten(_.map(Ids, _.values)) 	
+			console.log(filtered_Ids);
 			if(Ids.length > 0){
 				filtered_Ids.push(Ids);
 			}
 		});
+		//if(Object.keys(filtered_Ids).length > 0){
 		if(!(_.isEmpty(filtered_Ids))){ //only run this if we did a filter 
 			var keepIds = getIntersection(filtered_Ids);
 		
@@ -607,30 +610,36 @@ function performSearch(options) {
 				}				
 				var selector = $("#highlight_by_terms");
 				var Ids = getIds(gephiCol, selector, ini.highlight_by[i].keepNeighbors, keepNodes);
+				
+				if(Object.keys(Ids).length > 0){
+					//Get the id of the search options.
+					var index  = [];
+					$(".search-choice-close").each(function(){
+						var key = $( this ).parent().text();
+						var ai = $( this ).data( "option-array-index" )
+						index.push(ai);
+						$( this ).parent().css("background-image", "none");
+						$( this ).parent().css("background-color", color_highlights[ai]);
+						
+						//Run through nodes for every choice
+						keepNodes.forEach(function(n){
+							if(($.inArray(n.id, Ids[key] )) > -1){
+								n.colorNumber = i; //Also done by render, but not if you are in webgl
+								n.color = color_highlights[ai];
+								n.type = "highlight";
+							}
+						});
+					});
 
-		}
-		if(!(_.isEmpty(Ids))){ //only run this if we did a highlight 
-			console.log(Ids);
-			var index  = [];
-			$(".search-choice-close").each(function(){
-				index.push($( this ).data( "option-array-index" ));
-			});
+					//Now color everything that has not been filtered and save the nodes
+					//Object.keys(Ids).forEach(function(key, i){
+						
+					//});
 			
-			//Now color everything that has not been filtered and save the nodes
-			Ids.forEach(function(bin, i){
-				keepNodes.forEach(function(n){
-					if(($.inArray(n.id, bin )) > -1){
-						n.colorNumber = i; //Also done by render, but not if you are in webgl
-						n.color = color_highlights[i];
-            			n.type = "highlight";
-					}
-				});
-			});
+					//var keepIds = _.flatten(highlights_Ids);
 			
-			
-			var keepIds = _.flatten(highlights_Ids);
-			
-			$("#sigma-container").css("background-color", "#d9d3be");
+					$("#sigma-container").css("background-color", "#d9d3be");
+				}
 		}
 	}	
 	

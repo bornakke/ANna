@@ -108,6 +108,7 @@ function resetView(){
 			n.y = n.orgY;
 			n.color = n.originalColor;
 			n.size = n.orgSize;
+			n.active = false;
   		}
 	});
 	//Set settings back to original
@@ -449,7 +450,7 @@ function translate(){
 			$("#"+key+"Label").text(translations[key]);
 		}
 		if(key == "savetoCanvasModal"){
-			console.log($( "#ui-id-1" ));
+			//console.log($( "#ui-id-1" ));
 			$( "#ui-id-1" ).text(translations[key]);
 		}
 		else{ //Status texts

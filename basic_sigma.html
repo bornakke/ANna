@@ -17,12 +17,20 @@ $(document).ready(function() {
   	});
   	
 	//Parse data
-    sigma.parsers.gexf( 'data/person-person.gexf', 
+    sigma.parsers.gexf( 'data/november_med_partier.gexf', 
     function(graph) { 
     	  s.graph.read(graph);
           s.refresh();
-      var svgString = s.toSVG();
-      console.log(svgString);
+      
+      //Bind clickNode to highlight  
+        s.bind('clickNode', function(e) {
+        
+        var node = e.data.node;
+        node.active = true;
+        console.log(node);
+        s.refresh();
+        });
+      
     });
     
 });

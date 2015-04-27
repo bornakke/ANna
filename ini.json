@@ -29,6 +29,7 @@
 	"render": "webgl",
 	"logo_url": "",
 	"spatilize": false,
+	"ClickedKeepNeigbors": true,
 	"filter_by":[
 				{"label": "Parti", "gephiCol": "parti", "keepNeighbors": true},
 				{"label": "Name", "gephiCol": "label", "keepNeighbors": true}
