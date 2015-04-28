@@ -365,7 +365,7 @@ function getSearchterms(filterObject){
 //Get the ID of all nodes that are affected by filter
 function getIds(gephiCol, selector, keepNeighbors, nodes){
 	//Todo remove everything with Ids
-	var Ids = [];
+	var Ids = {};
 	var values = selector.val();
 	
 	if(!(_.isArray(values))) //When dealing with single select there is only one value and therefore no array.
@@ -449,24 +449,30 @@ function performSearch(options) {
 	if(filters[0].gephiCol != ""){ //Do we need to filter
 		filtered_Ids = new Array();
 		filters.forEach(function(filter, i){
+			var tempIds = [];
 			var selector = $("#filter_by_"+filter.gephiCol+"");
 			var Ids = getIds(filter.gephiCol, selector, filter.keepNeighbors, keepNodes);
+			if(Object.keys(Ids).length > 0){
+				Object.keys(Ids).forEach(function(term){
+					Ids[term].forEach(function(id){
+						tempIds.push(id);
+					});
+				});
+			}
 			
-			//Todo: Worked with array but not with object
-			/*Object.keys(Ids).forEach(function(key){
-				var test = Ids[key]; 
-			});*/
-			console.log(Ids);
-			filtered_Ids = _.flatten(_.map(Ids, _.values)) 	
-			console.log(filtered_Ids);
-			if(Ids.length > 0){
-				filtered_Ids.push(Ids);
+			if (tempIds.length > 0) {
+    			filtered_Ids[i] = tempIds;
 			}
 		});
-		//if(Object.keys(filtered_Ids).length > 0){
-		if(!(_.isEmpty(filtered_Ids))){ //only run this if we did a filter 
-			var keepIds = getIntersection(filtered_Ids);
 		
+		if(filtered_Ids.length > 0){
+			if(filtered_Ids.length > 1){
+				var keepIds = getIntersection(filtered_Ids);
+			}
+			else{
+				var keepIds = filtered_Ids[0]; 
+			}
+			
 			//Now remove everything that has not been filtered and save the nodes
 			keepNodes.forEach(function(n) {
 				if(($.inArray(n.id, keepIds )) > -1){
@@ -610,11 +616,11 @@ function performSearch(options) {
 				}				
 				var selector = $("#highlight_by_terms");
 				var Ids = getIds(gephiCol, selector, ini.highlight_by[i].keepNeighbors, keepNodes);
-				
-				if(Object.keys(Ids).length > 0){
+
+				if(!($.isEmptyObject(Ids))){
 					//Get the id of the search options.
 					var index  = [];
-					$(".search-choice-close").each(function(){
+					$("#highlight_by_container .search-choice-close").each(function(){
 						var key = $( this ).parent().text();
 						var ai = $( this ).data( "option-array-index" )
 						index.push(ai);
