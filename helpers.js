@@ -237,11 +237,9 @@ var savetoserver = function savetoserver(filetype, data){
 	  	data: {filetype: filetype, data:data}
 	  	}).done(function(response) {    		
   			//Send info to Google Analytics
-  			ga('send', 'event', filetype, location+"/"+response);
-  			
-  			
-  			if(filetype == "json"){
+			ga('send', 'event', filetype, location+"/"+response);
 				
+  			if(filetype == "json"){
 				var url = window.location.href;
 				url = url.substring(0, url.lastIndexOf('/'));
 				url = url + '/embedder.php?json=' + encodeURIComponent(response);
@@ -253,11 +251,10 @@ var savetoserver = function savetoserver(filetype, data){
 				$( "#savetoCanvasModal" ).html(html);
 				$( "#savetoCanvasModal" ).dialog( "open" );
 			
-				$("#embed").val( iframe );
+				$("#embed").val( "Embed kode genereret" );
 				$("#embed").fadeTo( "fast" , 1);
 				updateStatus("embed");
   			
-  				console.log(response);
 			}
   		});
 	}
