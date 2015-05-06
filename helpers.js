@@ -251,10 +251,9 @@ var savetoserver = function savetoserver(filetype, data){
 		url: location,
 	  	data: {filetype: filetype, data:data}
 	  	}).done(function(response) {
+  			//Send info to Google Analytics
+			ga('send', 'event', filetype, location);
   	});
-  	
-	//Send info to Google Analytics
-	ga('send', 'event', location, 'filetype');
 	}
 }
 
