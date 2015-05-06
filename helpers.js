@@ -176,7 +176,13 @@ function changeRender(type){
 
 //Capture canvas to png. Only works with canvas render.
 function captureCanvas(){
+	
+	$("#ajaxloader").fadeIn( "fast");
+	$("#dim").fadeIn( "fast");	
+	
+	//TODO: If sentencen which makes that only changes render if not canvas is set already.
 	changeRender("canvas");
+	
 	
 	setTimeout(function () {
 	var canvases = $('#sigma-container').children();
@@ -195,13 +201,7 @@ function captureCanvas(){
 	$( "#savetoCanvasModal" ).append(html);
 	$( "#savetoCanvasModal" ).dialog( "open" );
 
-	//From popup to modal
-	//var popupWindow = window.open("","","menubar=0,scrollbars=0,height="+height+",width="+width+"");
-	//popupWindow.document.write(html);
-	//popupWindow.document.close();
-
 	savetoserver("png", img);
-	
 	//Set the render back. 
 	changeRender("webgl");
 
@@ -209,6 +209,9 @@ function captureCanvas(){
 }
 
 function createEmbed(){
+	$("#ajaxloader").fadeIn( "fast");
+	$("#dim").fadeIn( "fast");	
+	
 	//Create json
 	var nodes = s.graph.nodes();
     var edges = s.graph.edges();
@@ -216,45 +219,47 @@ function createEmbed(){
 	graph['nodes'] = nodes;
 	graph['edges'] = edges;
 	
-	var location = window.location.href;
-    location = location.substring(0, location.lastIndexOf('/'));
-	location = location+"/savetoserver.php";
-	
-	//Now save it and get the link
-	$.ajax({
-  		type: "POST",
-		url: location,
-	  	data: {filetype: "json", data:JSON.stringify(graph)}
-	  	}).done(function(link) {
-    		var url = window.location.href;
-    		url = url.substring(0, url.lastIndexOf('/'));
-    		url = url + '/embedder.php?json=' + encodeURIComponent(link);
-    		
-    		var iframe = '<iframe width="820" height="620" src="'+url+'" frameborder="0" allowfullscreen></iframe>';
-    		$("#embed").val( iframe );
-    		$("#embed").fadeTo( "fast" , 1);
-    		updateStatus("embed");
-  	});
+	savetoserver("json", JSON.stringify(graph));
+
 }
 
 //Save copy to server for monitoring
 var savetoserver = function savetoserver(filetype, data){
 
-
 	if (document.location.hostname != "localhost"){ //We cannot make contact if we are on a localhost
 		var location = window.location.href;
     	location = location.substring(0, location.lastIndexOf('/'));
-		location = location+"/savetoserver.php";
+		requestlocation = location+"/savetoserver.php";
 		
 		$.ajax({
   		type: "POST",
-		url: location,
+		url: requestlocation,
 	  	data: {filetype: filetype, data:data}
-	  	}).done(function(response) {
-  			
+	  	}).done(function(response) {    		
   			//Send info to Google Analytics
-			ga('send', 'event', filetype, location);
-  	});
+  			ga('send', 'event', filetype, location+"/"+response);
+  			
+  			
+  			if(filetype == "json"){
+				
+				var url = window.location.href;
+				url = url.substring(0, url.lastIndexOf('/'));
+				url = url + '/embedder.php?json=' + encodeURIComponent(response);
+	
+				var html = '<textarea cols="100" readonly><iframe width="820" height="620" src="'+url+'" frameborder="0" allowfullscreen></iframe></textarea>';
+
+				$( "#savetoCanvasModal" ).empty();	
+				$( "#savetoCanvasModal" ).dialog('option', 'title', 'Embed kode genereret');
+				$( "#savetoCanvasModal" ).html(html);
+				$( "#savetoCanvasModal" ).dialog( "open" );
+			
+				$("#embed").val( iframe );
+				$("#embed").fadeTo( "fast" , 1);
+				updateStatus("embed");
+  			
+  				console.log(response);
+			}
+  		});
 	}
 }
 

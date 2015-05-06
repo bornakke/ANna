@@ -167,8 +167,16 @@ function createInterface(){
 	
 	//Initiate search tab
 	$('#menu a:last').tab('show');
+	
+	$('div#savetoCanvasModal').bind('dialogclose', function(event) {
+     	$("#ajaxloader").fadeOut( "fast");
+		$("#dim").fadeOut( "fast");	
+ 	});
+ 	
+ 	
+	
 	//TODO REMOVE WHEN EVERYTHING WORKS
-	performSearch({skipIndexation:false});
+	//performSearch({skipIndexation:false});
 }
 
 //Create single select interfaces

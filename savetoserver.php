@@ -1,5 +1,8 @@
 <?php
-	$filename='exports/'.date('m-d-Y_His').".".$_POST['filetype'];
+	//header('Content-Type: text/json; charset=utf-8'); //Send json back
+	$filename='exports/'.time().".".$_POST['filetype'];
+	
+	//$filename='exports/'.date('m-d-Y_His').".".$_POST['filetype'];
 	
 	if($_POST['filetype'] == "png"){
 		// Strip the crud from the front of the string [1]
@@ -15,4 +18,5 @@
 
 	file_put_contents($filename, $decoded);
 	echo $filename;
+	//echo $_POST['filetype'];
 ?>
