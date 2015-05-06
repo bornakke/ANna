@@ -34,6 +34,7 @@ function enableGraphChanger(mode){
 }
 
 function changeLogo(logo, url){
+console.log("hej");
 	$("#logos").hide();
 	$("#footer").append('<div class="col-md-2 col-md-offset-2 bottom-row-item"><p><i><small>A production by:</small></i></p><a id="logo_generic" href="'+url+'" target="_blank" class="bottom-row-brand "><img height="50px" src="'+logo+'"></a></div></div>');			
 }
@@ -310,7 +311,9 @@ function fillDetails(node, neighbors){
 			$("#details_view").append(''+info.label+': '+connections+'<br>');
 		}
 		else{
-			$("#details_view").append(''+info.label+': '+node.attributes[info.gephiCol]+'<br>');
+			if(node.attributes[info.gephiCol] != "" & node.attributes[info.gephiCol] !== undefined ){
+				$("#details_view").append(''+info.label+': '+node.attributes[info.gephiCol]+'<br>');
+			}
 		}
 	});
 	$("#details_view").show( );
@@ -401,6 +404,7 @@ function getDropdown(_by){
 
 //Get intersections between two arrays
 function getIntersection(arrays){
+	console.log(arrays);
 	var result = arrays.shift().reduce(function(res, v) {
     if (res.indexOf(v) === -1 && arrays.every(function(a) {
         return a.indexOf(v) !== -1;

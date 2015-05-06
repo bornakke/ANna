@@ -9,8 +9,8 @@ $(document).ready(function() {
 	window.s = new sigma({ 
 		renderers: [
    	 		{
-      		container: 'sigma-container'
-      		/*type: 'canvas'*/ // force it to canvas... if it were not already?
+      		container: 'sigma-container',
+      		type: 'canvas' // force it to canvas... if it were not already?
       		}
   		],
   		settings: {}
@@ -21,17 +21,18 @@ $(document).ready(function() {
     function(graph) { 
     	  s.graph.read(graph);
           s.refresh();
-      
-      //Bind clickNode to highlight  
-        s.bind('clickNode', function(e) {
-        
-        var node = e.data.node;
-        node.active = true;
-        console.log(node);
-        s.refresh();
+      	
+        var i = 0;
+    	s.graph.edges().forEach(function(e) {
+            	e.color = "rgb(190,190,190,0.5)";
         });
+       s.refresh(); 
       
     });
+    
+
+    
+    
     
 });
 </script>

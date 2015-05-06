@@ -9,7 +9,7 @@
  			},
  	"defaultGraph": "graph1",
  	"logo": "",
- 	"url": "",
+ 	"logo_url": "",
  	"translation": {
  			"resetCamera": "Centrer",
  			"savetoSVG": "Gem til SVG", 
@@ -24,19 +24,20 @@
  	},
 "graph1":
 	{
-	"graph_header": "Vælg datasæt",
-	"basemap": "data/november_med_partier.gexf",
-	"render": "webgl",
+	"graph_header": "",
+	"basemap": "data/elite.gexf",
+	"render": "canvas",
 	"logo_url": "",
 	"spatilize": false,
 	"ClickedKeepNeigbors": true,
 	"filter_by":[
-				{"label": "Parti", "gephiCol": "parti", "keepNeighbors": true},
-				{"label": "Name", "gephiCol": "label", "keepNeighbors": true}
+				{"label": "Navn", "gephiCol": "name", "keepNeighbors": true},
+				{"label": "Sektor", "gephiCol": "sector_order_cat", "keepNeighbors": false}
 				],
 	"highlight_by":[
-				{"label": "Parti", "gephiCol": "parti", "keepNeighbors": true, "multicolor": true},
-				{"label": "Name", "gephiCol": "label", "keepNeighbors": true, "multicolor": false}
+				{"label": "Uddannelses type", "gephiCol": "uddannelse_type", "keepNeighbors": false, "multicolor": false},
+				{"label": "Uddannelse sted", "gephiCol": "uddannelse_sted", "keepNeighbors": false, "multicolor": false},
+				{"label": "Family klasse", "gephiCol": "family_class", "keepNeighbors": false, "multicolor": true}
 				],
 	"merge_by":[
 				{"label": "Merge by", "gephiCol": [""]}
@@ -51,9 +52,11 @@
 				""
 				],
 	"details_view":[
-				{"label": "Parti", "gephiCol": ""},
-				{"label": "connections", "gephiCol": ""},
-				{"label": "Timezone", "gephiCol": ""}
+				{"label": "Navn", "gephiCol": "name"},
+				{"label": "Title", "gephiCol": "title"},
+				{"label": "Primær position", "gephiCol": "primary.Position.1"},
+				{"label": "Ca. Alder", "gephiCol": "age_cat"},
+				{"label": "Kongelige medaljer", "gephiCol": "decoration_DK"}
 				]
 	}
 }

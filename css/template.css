@@ -140,16 +140,37 @@ margin-top:10px;
 	padding-bottom:20px;
 }
 
-/*#filter_by_container, #highlight_by_container, #merge_by_container, #compare_by_container, #color_by_container, #size_by_container{
-		display:none;
-}*/
-
 #filter_by_container label{
 display: block;
 }
-.filter_container>div:not(:first-child){
-	margin-left: 30px;
+
+.filter_container{
+margin-bottom: 20px;
 }
+
+
+
+/* Magtelite hack */
+.filter_header, #menu{
+display:none;
+}
+/*.filter_container>div:not(:first-child){
+	margin-left: 30px;
+}*/
+#logo_aau{
+	display:inline-block;
+	width:100px;
+	height:70px;
+	background-size: 100px 70px;
+	background-image: url("images/TANT-LAB-Blaa.gif");
+}
+
+.tab-content{
+padding-top:0;
+}
+
+
+
 
 .search-field>input{ /*Show all helper text in multiple chossen */
 	min-width: 160px;
@@ -217,6 +238,8 @@ margin-left:15px;
 	height:50px;
 	background-size: 177px 50px;
 	background-image: url("images/logo_ku.jpg");
+	vertical-align: top;
+	margin-left:20px;
 }
 
 logo_generic{

@@ -48,7 +48,7 @@ function drawGraph() {
             e.orgLabel = e.label;
             e.label = null;
             if(_.isUndefined(e.color)){
-            	e.color = "#C0C0C0";
+            	e.color = "rgba(190,190,190,0.05)";//"#DCDCDC";
             }
             e.originalColor = e.color;
         });
@@ -175,6 +175,7 @@ function createInterface(){
 function createSingleSelect(filterName, filterObject){
 	//Get value for dropdown
 	var selectValues = getDropdown(filterObject);
+
 	selectValues = selectValues[0]; //fix
 	if(selectValues[0] != ""){ //is filter active
 		$("#"+filterName+"_container").append('<label for="'+filterName+'">'+filterObject[0].label+'</label><select id="'+filterName+'" class="chosen-select">');
@@ -225,7 +226,7 @@ function createMultiSelect(filterName, filterObject){
 	    $("#"+filterName+'_'+gephiCol).chosen({
     		search_contains: true,
         	no_results_text: 'No results found',
-        	placeholder_text_multiple: 'Chose one or more entities...',
+        	placeholder_text_multiple: 'Vælg en eller flere søgeord...', //Hack Magt
         	width: '95%'
     	});
     });
@@ -281,7 +282,7 @@ function createGroupedMultiSelect(filterName, filterObject){
     	$("#"+filterName+"_terms").chosen({
     		search_contains: true,
         	no_results_text: 'No results found',
-        	placeholder_text_multiple: 'Chose one or more entities...',
+        	placeholder_text_multiple: 'Vælg en eller flere søgeord...',
         	width: '95%',
         	display_disabled_options: false
     	});
@@ -327,13 +328,14 @@ function createRadio(by){
 function getSearchterms(filterObject){ 
 	var selectValues = {};
 	if(filterObject[0].gephiCol != ""){ //IS the filter active
-	
+
 		//Run trough all Gephicol for the filter and then through nodes. Save the filter values in seperate objects for later manipulation
 		for (i = 0; i < filterObject.length; i++) { //Run through the gephiCol of filterObject
 			var gephiCol = filterObject[i].gephiCol;
+
 			selectValues[gephiCol] = new Array(); //Prepare Array
 			if(_.isArray(gephiCol)){ //Are this Gephicol a nested array //Change
-				
+	
 				s.graph.nodes().forEach(function(n) { //Now run through all node for every filter of filterObject type
 					if(n.attributes[gephiCol]){ //Is this filter in this node and not udefined
 						var terms = n.attributes[gephiCol].split("|");
@@ -344,7 +346,7 @@ function getSearchterms(filterObject){
 				//Trim to make sure spaces is not a problem
 				selectValues[gephiCol] = selectValues[gephiCol].map(function(value){return value.trim();});
 			}
-			else{		
+			else{
 				s.graph.nodes().forEach(function(n) { //Now run through all node for every filter of filterObject type
 					if(n.attributes[gephiCol]){ //Is this filter in this node and not udefined				
 						selectValues[gephiCol].push(n.attributes[gephiCol]);
@@ -447,6 +449,7 @@ function performSearch(options) {
 	//Filter
 	var filters = ini.filter_by;
 	if(filters[0].gephiCol != ""){ //Do we need to filter
+		var j = 0;
 		filtered_Ids = new Array();
 		filters.forEach(function(filter, i){
 			var tempIds = [];
@@ -459,12 +462,11 @@ function performSearch(options) {
 					});
 				});
 			}
-			
 			if (tempIds.length > 0) {
-    			filtered_Ids[i] = tempIds;
+    			filtered_Ids[j] = tempIds;
+    			j = j+1;
 			}
 		});
-		
 		if(filtered_Ids.length > 0){
 			if(filtered_Ids.length > 1){
 				var keepIds = getIntersection(filtered_Ids);
@@ -615,34 +617,40 @@ function performSearch(options) {
 					}
 				}				
 				var selector = $("#highlight_by_terms");
+				
 				var Ids = getIds(gephiCol, selector, ini.highlight_by[i].keepNeighbors, keepNodes);
 
 				if(!($.isEmptyObject(Ids))){
 					//Get the id of the search options.
-					var index  = [];
-					$("#highlight_by_container .search-choice-close").each(function(){
-						var key = $( this ).parent().text();
-						var ai = $( this ).data( "option-array-index" )
-						index.push(ai);
-						$( this ).parent().css("background-image", "none");
-						$( this ).parent().css("background-color", color_highlights[ai]);
+						var index  = [];
+						$("#highlight_by_container .search-choice-close").each(function(){
 						
-						//Run through nodes for every choice
-						keepNodes.forEach(function(n){
-							if(($.inArray(n.id, Ids[key] )) > -1){
-								n.colorNumber = i; //Also done by render, but not if you are in webgl
-								n.color = color_highlights[ai];
-								n.type = "highlight";
+							var key = $( this ).parent().text();
+							if(filters.multicolor){
+								var ai = $( this ).data( "option-array-index" )
+								index.push(ai);
+								$( this ).parent().css("background-image", "none");
+								$( this ).parent().css("background-color", color_highlights[ai]);
+						
+								//Run through nodes for every choice
+								keepNodes.forEach(function(n){
+									if(($.inArray(n.id, Ids[key] )) > -1){
+										n.colorNumber = i; //Also done by render, but not if you are in webgl
+										n.color = color_highlights[ai];
+										n.type = "highlight";
+									}
+								});
 							}
+							else{
+								keepNodes.forEach(function(n){
+									if(($.inArray(n.id, Ids[key] )) > -1){
+										n.color = "rgb(255,255,255)";
+										n.type = "highlight";
+									}
+								});
+							}
+							
 						});
-					});
-
-					//Now color everything that has not been filtered and save the nodes
-					//Object.keys(Ids).forEach(function(key, i){
-						
-					//});
-			
-					//var keepIds = _.flatten(highlights_Ids);
 			
 					$("#sigma-container").css("background-color", "#d9d3be");
 				}

@@ -72,7 +72,7 @@
     				enableGraphChanger(mode);
 
     				if(globalsettings.logo != "" & globalsettings.url != ""){
-	    				changeLogo(globalsettings.logo, globalsettings.url);
+	    				changeLogo(globalsettings.logo, globalsettings.logo_url);
 	    			}
     				drawGraph();
     			}
@@ -164,12 +164,13 @@
     						<div id="compare_by_container" class="hide"><span class="glyphicon glyphicon-stats"></div>
     					</div>
     					<div role="tabpanel" class="tab-pane" id="search">
-    						<div id="highlight_by_container" class="hide">
-	    					    <div class="filter_header"><span class="glyphicon glyphicon-pushpin"></span> Highlight:</div>
-    					    </div>
     						<div id="filter_by_container" class="filter_container hide">
     							<div class="filter_header"><span class="glyphicon glyphicon-filter"></span> Filter:</div>
     						</div>
+    						<div id="highlight_by_container" class="filter_container hide">
+	    					    <div class="filter_header"><span class="glyphicon glyphicon-pushpin"></span> Highlight:</div>
+    					    </div>
+    						
     					</div>
   					</div>
 				</div>
@@ -185,9 +186,11 @@
         </div>
         <div class="col-md-6"></div>
         <div id="logos" class="col-md-4 bottom-row-item">
-        	<p><i><small>A collaboration between:</small></i></p>
+        	<!--<p><i><small>A collaboration between:</small></i></p>-->
+        	<p><i><small>Et samarbejde imellem:</small></i></p>
+            <a id="logo_aau" href="http://www.tantlab.aau.dk/" target="_blank" class="bottom-row-brand "></a>
             <a id="logo_ku" href="http://www.soc.ku.dk/english/" target="_blank" class="bottom-row-brand "></a>
-			<a id="logo_medialab" href="http://medialab.sciences-po.fr" target="_blank" class="bottom-row-brand "></a>
+			<!--<a id="logo_medialab" href="http://medialab.sciences-po.fr" target="_blank" class="bottom-row-brand "></a>-->
         </div>       
 	</div>
 </div>
