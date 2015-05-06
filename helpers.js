@@ -405,7 +405,6 @@ function getDropdown(_by){
 
 //Get intersections between two arrays
 function getIntersection(arrays){
-	console.log(arrays);
 	var result = arrays.shift().reduce(function(res, v) {
     if (res.indexOf(v) === -1 && arrays.every(function(a) {
         return a.indexOf(v) !== -1;

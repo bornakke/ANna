@@ -13,20 +13,14 @@ $(document).ready(function() {
       		type: 'canvas' // force it to canvas... if it were not already?
       		}
   		],
-  		settings: {}
+  		settings: {"labelThreshold": 15, "batchEdgesDrawing":true, "hideEdgesOnMove":true, "drawEdges":false, "drawEdgeLabels":false, "enableEdgeHovering":false, "defaultLabelColor": "#4f4d4d"}
   	});
   	
 	//Parse data
-    sigma.parsers.gexf( 'data/november_med_partier.gexf', 
+    sigma.parsers.gexf( 'data/elite.gexf', 
     function(graph) { 
     	  s.graph.read(graph);
           s.refresh();
-      	
-        var i = 0;
-    	s.graph.edges().forEach(function(e) {
-            	e.color = "rgb(190,190,190,0.5)";
-        });
-       s.refresh(); 
       
     });
     

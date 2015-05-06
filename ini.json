@@ -31,13 +31,13 @@
 	"spatilize": false,
 	"ClickedKeepNeigbors": true,
 	"filter_by":[
-				{"label": "Navn", "gephiCol": "name", "keepNeighbors": true},
-				{"label": "Sektor", "gephiCol": "sector_order_cat", "keepNeighbors": false}
+				{"label": "Navn", "gephiCol": "name", "keepNeighbors": true, "showSelected": true},
+				{"label": "Sektor", "gephiCol": "sector_order_cat", "keepNeighbors": false, "showSelected": false}
 				],
 	"highlight_by":[
-				{"label": "Uddannelses type", "gephiCol": "uddannelse_type", "keepNeighbors": false, "multicolor": false},
-				{"label": "Uddannelse sted", "gephiCol": "uddannelse_sted", "keepNeighbors": false, "multicolor": false},
-				{"label": "Family klasse", "gephiCol": "family_class", "keepNeighbors": false, "multicolor": true}
+				{"label": "Uddannelses type", "gephiCol": "uddannelse_type", "keepNeighbors": false, "multicolor": false, "showSelected": true},
+				{"label": "Uddannelse sted", "gephiCol": "uddannelse_sted", "keepNeighbors": false, "multicolor": false, "showSelected": true},
+				{"label": "Family klasse", "gephiCol": "family_class", "keepNeighbors": false, "multicolor": true, "showSelected": true}
 				],
 	"merge_by":[
 				{"label": "Merge by", "gephiCol": [""]}

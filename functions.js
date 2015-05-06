@@ -373,11 +373,11 @@ function getSearchterms(filterObject){
 }
 
 //Get the ID of all nodes that are affected by filter
-function getIds(gephiCol, selector, keepNeighbors, nodes){
+function getIds(gephiCol, selector, keepNeighbors, showSelected, nodes){
 	//Todo remove everything with Ids
 	var Ids = {};
 	var values = selector.val();
-	
+
 	if(!(_.isArray(values))) //When dealing with single select there is only one value and therefore no array.
 		var values = [values];
 
@@ -398,9 +398,11 @@ function getIds(gephiCol, selector, keepNeighbors, nodes){
 		
 		nodes.forEach(function(n) {
 			//Make sure that the node has a value
-			if(!_.isUndefined(n.attributes[gephiCol])){ 
+			if((!_.isUndefined(n.attributes[gephiCol])) | (!_.isUndefined(n[gephiCol]))){ 
 				
-				if(_.isArray(gephiCol)){ //Are this Gephicol a nested array do an extra foreach on the terms
+				//Are this Gephicol a nested array do an extra foreach on the terms
+				//Should probably be updated a bit
+				if(_.isArray(gephiCol)){ 
 					var terms = n.attributes[gephiCol].split("|");
 				 	//Trim to make sure spaces is not a problem
 					terms = terms.map(function(value){return value.trim();});
@@ -408,6 +410,9 @@ function getIds(gephiCol, selector, keepNeighbors, nodes){
 				 		if(($.inArray(term, values )) > -1){
 				 			var position = values[$.inArray(term, values )];
 				 			Ids[position].push(n.id);
+				 			if(showSelected == true){ //Force label
+  								n.active = true;
+  							}
 				 			if(keepNeighbors == true){ //Check if we should keepNeighbors and add them to the list
   								Object.keys(s.graph.neighbors(n.id)).forEach(function(neighbor){
   									Ids[position].push(neighbor);
@@ -416,21 +421,19 @@ function getIds(gephiCol, selector, keepNeighbors, nodes){
 				 		}
 				 	});
 				}
+				//Simply value
 				else if(($.inArray(n.attributes[gephiCol], values )) > -1){
   					var position = values[$.inArray(n.attributes[gephiCol], values )];
-  					Ids[position].push(n.id);
- 	 				if(keepNeighbors == true){ //Check if we should keepNeighbors and add them to the list
-  						Object.keys(s.graph.neighbors(n.id)).forEach(function(neighbor){
-  							Ids[position].push(neighbor);
-  						});
-  					}
   				}
-  			}
-  			else if(gephiCol == "id" || gephiCol == "label") { //Special case
-  				if(($.inArray(n[gephiCol], values )) > -1){
+  				else if((gephiCol == "id" || gephiCol == "label") & (($.inArray(n[gephiCol], values )) > -1)) { //Special case
   					var position = values[$.inArray(n[gephiCol], values )];
+  				}
+  				if(position){  					
   					Ids[position].push(n.id);
-  					if(keepNeighbors == true){
+  					if(showSelected == true){ //Force label
+  						n.active = true;
+  					}
+ 	 				if(keepNeighbors == true){ //Check if we should keepNeighbors and add them to the list
   						Object.keys(s.graph.neighbors(n.id)).forEach(function(neighbor){
   							Ids[position].push(neighbor);
   						});
@@ -448,6 +451,8 @@ function performSearch(options) {
 	//Inside these two selectors you can then run color_by, compare_by, merge_by in this track 
 	//Inside boxes is AND and between boxes is OR 
 	
+	var searchValues = {};
+	
 	//Reset view so that we know what we got
 	resetView();
 	
@@ -462,7 +467,14 @@ function performSearch(options) {
 		filters.forEach(function(filter, i){
 			var tempIds = [];
 			var selector = $("#filter_by_"+filter.gephiCol+"");
-			var Ids = getIds(filter.gephiCol, selector, filter.keepNeighbors, keepNodes);
+			
+			//Tempoary Analytics
+			var values = selector.val();
+			if(values != null){
+				searchValues[filter.gephiCol] = values.join(", ");
+			}
+			
+			var Ids = getIds(filter.gephiCol, selector, filter.keepNeighbors, filter.showSelected, keepNodes);
 			if(Object.keys(Ids).length > 0){
 				Object.keys(Ids).forEach(function(term){
 					Ids[term].forEach(function(id){
@@ -626,7 +638,13 @@ function performSearch(options) {
 				}				
 				var selector = $("#highlight_by_terms");
 				
-				var Ids = getIds(gephiCol, selector, ini.highlight_by[i].keepNeighbors, keepNodes);
+				//Tempoary Analytics
+				var values = selector.val();
+				if(values != null){
+					searchValues[gephiCol] = values.join(", ");
+				}
+						
+				var Ids = getIds(gephiCol, selector, filters[i].keepNeighbors, filters[i].showSelected, keepNodes);
 
 				if(!($.isEmptyObject(Ids))){
 					//Get the id of the search options.
@@ -723,5 +741,7 @@ function performSearch(options) {
 		}
 	}
 	//s.render();
+	
+	ga('send', 'event', "searchValues", JSON.stringify(searchValues));
     s.refresh({ skipIndexation: options.skipIndexation });
 }

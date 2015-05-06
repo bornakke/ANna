@@ -3,8 +3,10 @@ sigma.webgl.nodes.onlylabel = {addNode: function() {}, render: function() {}, in
 //sigma.webgl.edges.def = sigma.webgl.edges.fast;
 //sigma.webgl.nodes.highlight =  sigma.canvas.nodes.highlight;
 
+//sigma.canvas.edges.def = function() { };
+
 /**
-   * Override the default node renderer. It renders the node as a simple disc.
+   * 
    *
    * @param  {object}                   node     The node object.
    * @param  {CanvasRenderingContext2D} context  The canvas context.
