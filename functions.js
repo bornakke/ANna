@@ -172,11 +172,7 @@ function createInterface(){
      	$("#ajaxloader").fadeOut( "fast");
 		$("#dim").fadeOut( "fast");	
  	});
- 	
- 	
-	
-	//TODO REMOVE WHEN EVERYTHING WORKS
-	//performSearch({skipIndexation:false});
+
 }
 
 //Create single select interfaces

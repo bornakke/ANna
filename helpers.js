@@ -15,7 +15,7 @@ function enableGraphChanger(mode){
 		}
 	});
 	
-	if(mode != 2){ //Add subtitel	
+	if(mode != 2 & ini.graph_header != ""){ //Add subtitel	
 		if(mode == 1){
     		$("#titel").append(' <small> - '+ini.graph_header+'</small>');	
 		}
@@ -34,7 +34,6 @@ function enableGraphChanger(mode){
 }
 
 function changeLogo(logo, url){
-console.log("hej");
 	$("#logos").hide();
 	$("#footer").append('<div class="col-md-2 col-md-offset-2 bottom-row-item"><p><i><small>A production by:</small></i></p><a id="logo_generic" href="'+url+'" target="_blank" class="bottom-row-brand "><img height="50px" src="'+logo+'"></a></div></div>');			
 }
