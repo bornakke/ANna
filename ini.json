@@ -25,7 +25,7 @@
 "graph1":
 	{
 	"graph_header": "",
-	"basemap": "data/elite.gexf",
+	"basemap": "data/elite_lessattributes.gexf",
 	"render": "canvas",
 	"logo_url": "",
 	"spatilize": false,

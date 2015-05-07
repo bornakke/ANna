@@ -57,7 +57,7 @@ function drawGraph() {
 		//Connect instance with the imported graph. From here S is the place to start rather than graph
 		s.graph.read(graph);
 		
-		//Bind Click edge
+		//Bind Click edge - disabled since edge hovering is disabled
 		/*s.bind('clickEdge doubleClickEdge rightClickEdge', function(e) {
 			resetView(); //Reset view and sustain search criterias
 			e.data.edge.color = "#000";
@@ -117,7 +117,7 @@ function drawGraph() {
         		return !n.hidden;
         	}).length;
         	
-        	if(nodeslength > 2000){
+        	if(nodeslength > 200){
         		s.settings({drawEdges:false});
         	}
         	else{
