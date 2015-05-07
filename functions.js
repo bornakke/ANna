@@ -10,7 +10,7 @@ function drawGraph() {
       		}
   		],
   		//enableEdgeHovering disabled due to it being a heavy burden on selecting nodes. 
-  		settings: {"labelThreshold": 15, "batchEdgesDrawing":true, "hideEdgesOnMove":true, "zoomingRatio":2, "drawEdges":false, "drawEdgeLabels":false, "enableEdgeHovering":false, "defaultLabelColor": "#4f4d4d"}
+  		settings: {"labelThreshold": 15, "batchEdgesDrawing":true, "hideEdgesOnMove":true, "drawEdges":false, "drawEdgeLabels":false, "enableEdgeHovering":false, "defaultLabelColor": "#4f4d4d"}
   	});
   	
 	//Parse data
@@ -58,12 +58,12 @@ function drawGraph() {
 		s.graph.read(graph);
 		
 		//Bind Click edge
-		s.bind('clickEdge doubleClickEdge rightClickEdge', function(e) {
+		/*s.bind('clickEdge doubleClickEdge rightClickEdge', function(e) {
 			resetView(); //Reset view and sustain search criterias
 			e.data.edge.color = "#000";
 			e.data.edge.label = e.data.edge.orgLabel
 			s.refresh({ skipIndexation: true });
-		});
+		});*/
 
 		//Bind clickNode to highlight  
         s.bind('clickNode', function(e) {
