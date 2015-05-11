@@ -2,32 +2,16 @@
 <head>
 <script src="js/sigma.min.js"></script>
 <script src="js/sigma.parsers.gexf.min.js"></script>
-<!--<script type="text/javascript" src="js/sigma.exporters.svg.js"></script>	-->
 <script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
 <script>
 $(document).ready(function() {
-	window.s = new sigma({ 
-		renderers: [
-   	 		{
-      		container: 'sigma-container',
-      		type: 'canvas' // force it to canvas... if it were not already?
-      		}
-  		],
-  		settings: {"drawEdges":false, "drawLabels":false}
-  		//settings: {"labelThreshold": 15, "batchEdgesDrawing":true, "hideEdgesOnMove":true, "drawEdges":false, "drawEdgeLabels":false, "enableEdgeHovering":false, "defaultLabelColor": "#4f4d4d"}
-  	});
-  	
-	//Parse data
-    sigma.parsers.gexf( 'data/theelite_noevent.gexf', 
-    function(graph) { 
-    	  s.graph.read(graph);
-          s.refresh();
-      
+	window.s = sigma.parsers.gexf(
+    'data/theelite_noevent.gexf',{
+      container: 'sigma-container',
+      type: 'canvas',
+      settings: {"drawEdges":false, "drawLabels":false}
     });
-    
 
-    
-    
     
 });
 </script>
