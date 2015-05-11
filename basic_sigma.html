@@ -1,18 +1,29 @@
+<!DOCTYPE html>
 <html>
 <head>
-<script src="js/sigma.min.js"></script>
-<script src="js/sigma.parsers.gexf.min.js"></script>
+<meta charset="UTF-8">
+<script type="text/javascript" src="js/sigma.min.js"></script>
+<script type="text/javascript" src="js/sigma.parsers.gexf.min.js"></script>
 <script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
 <script>
-$(document).ready(function() {
-	window.s = sigma.parsers.gexf(
-    'data/theelite_noevent.gexf',{
-      container: 'sigma-container',
-      type: 'canvas',
-      settings: {"drawEdges":false, "drawLabels":false}
-    });
 
-    
+$(document).ready(function() {
+	window.s = new sigma({ 
+		renderers: [
+   	 		{
+      		container: 'sigma-container',
+      		type: 'canvas' // force it to canvas...
+      		}
+  		],
+  		settings: {"drawEdges":false, "drawLabels":false}
+  	});
+  	
+	//Parse data
+    sigma.parsers.gexf( 'data/theelite_noevent.gexf', 
+    function(graph) {     	  
+    	  s.graph.read(graph);
+          s.refresh();
+    });
 });
 </script>
 <style>
