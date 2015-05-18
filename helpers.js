@@ -14,15 +14,16 @@ function enableGraphChanger(mode){
 			duration: 500
 		}
 	});
-	
-	if(mode != 2 & ini.graph_header != ""){ //Add subtitel	
-		if(mode == 1){
-    		$("#titel").append(' <small> - '+ini.graph_header+'</small>');	
+	if(mode != 2){
+		if(ini.graph_header != ""){ //Add subtitel	
+			if(mode == 1){
+    			$("#titel").append(' <small> - '+ini.graph_header+'</small>');	
+			}
+			else{
+				$("#titel").append('<small> - <a id="graph_changer" href="#">'+ini.graph_header+'</a><span class="glyphicon glyphicon-book"></span></small>');
+    		}
+			$( '.ui-dialog-titlebar-close')[0].style.display = 'inline';
 		}
-		else{
-			$("#titel").append('<small> - <a id="graph_changer" href="#">'+ini.graph_header+'</a><span class="glyphicon glyphicon-book"></span></small>');
-    	}
-		$( '.ui-dialog-titlebar-close')[0].style.display = 'inline';
 	}
 	else{ //Hide close button	
 			$( '.ui-dialog-titlebar-close')[0].style.display = 'none';
@@ -109,6 +110,7 @@ function resetView(){
 			n.color = n.originalColor;
 			n.size = n.orgSize;
 			n.active = false;
+			delete n.colorNumber
   		}
 	});
 	//Set settings back to original

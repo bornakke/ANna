@@ -211,29 +211,31 @@ function createSingleSelect(filterName, filterObject){
 function createMultiSelect(filterName, filterObject){ 
 	var selectValues = getSearchterms(filterObject); 
 
-	Object.keys(selectValues).forEach(function(gephiCol, i){
-		//console.log(selectValues[filterName]);
+	if(selectValues != {}){
+		Object.keys(selectValues).forEach(function(gephiCol, i){
+			//console.log(selectValues[filterName]);
 	
-		$("#"+filterName+"_container").append('<div><label for="'+filterName+'_'+gephiCol+'">'+filterObject[i].label+'</label><select id="'+filterName+'_'+gephiCol+'" class="chosen-select" multiple="true"></div>');
+			$("#"+filterName+"_container").append('<div><label for="'+filterName+'_'+gephiCol+'">'+filterObject[i].label+'</label><select id="'+filterName+'_'+gephiCol+'" class="chosen-select" multiple="true"></div>');
 		
-		//Adding tags to multiselects...
-		selectValues[gephiCol].map(function(value) {
-			$("#"+filterName+'_'+gephiCol).append($('<option/>', { value: value, text: value }));
-		});
+			//Adding tags to multiselects...
+			selectValues[gephiCol].map(function(value) {
+				$("#"+filterName+'_'+gephiCol).append($('<option/>', { value: value, text: value }));
+			});
 			
-		//When selecting options, automatically perform search
-		$("#"+filterName+'_'+gephiCol).on('change', function(event, params) {
-    		$("#"+filterName+'_'+gephiCol).trigger("chosen:updated");
-    		performSearch({skipIndexation:true});
-    	});
-    
-	    $("#"+filterName+'_'+gephiCol).chosen({
-    		search_contains: true,
-        	no_results_text: 'No results found',
-        	placeholder_text_multiple: 'Vælg en eller flere søgeord...', //Hack Magt
-        	width: '95%'
-    	});
-    });
+			//When selecting options, automatically perform search
+			$("#"+filterName+'_'+gephiCol).on('change', function(event, params) {
+				$("#"+filterName+'_'+gephiCol).trigger("chosen:updated");
+				performSearch({skipIndexation:true});
+			});
+	
+			$("#"+filterName+'_'+gephiCol).chosen({
+				search_contains: true,
+				no_results_text: 'No results found',
+				placeholder_text_multiple: 'Vælg en eller flere søgeord...', //Hack Magt
+				width: '95%'
+			});
+		});
+	}
 	
 	showMenu(filterName);
 }
@@ -242,13 +244,15 @@ function createMultiSelect(filterName, filterObject){
 function createGroupedMultiSelect(filterName, filterObject){
 	var selectValues = getSearchterms(filterObject); 
 
+
 	//Bug in chosen makes it imposible to assign a class with the value label to the option 
 	if(_.isArray(selectValues['label'])){ 
 		selectValues['labelBug'] = selectValues['label'];
 		delete selectValues.label;
 	};
-	
-	if(selectValues != {}){ //Filter is enabled 	
+
+	if(selectValues != {} & !(_.isEmpty(selectValues))){ //Filter is enabled 	
+		console.log(selectValues);
 		
 		//Create two select boxes to populate
 		$("#"+filterName+"_container").append('<select id="'+filterName+'_category" class="chosen-select">'); //Add blank first option to allow deselect
@@ -648,17 +652,20 @@ function performSearch(options) {
 						$("#highlight_by_container .search-choice-close").each(function(){
 						
 							var key = $( this ).parent().text();
-							if(filters.multicolor){
-								var ai = $( this ).data( "option-array-index" )
+							if(filters[i].multicolor){
+								
+								var ai = $( this ).data( "option-array-index" );
 								index.push(ai);
 								$( this ).parent().css("background-image", "none");
-								$( this ).parent().css("background-color", color_highlights[ai]);
+								$( this ).parent().css("background-color", color_scheme[ai]);
+						
+								console.log($( this ).data( "option-array-index" ));
 						
 								//Run through nodes for every choice
 								keepNodes.forEach(function(n){
 									if(($.inArray(n.id, Ids[key] )) > -1){
-										n.colorNumber = i; //Also done by render, but not if you are in webgl
-										n.color = color_highlights[ai];
+										n.colorNumber = ai; //Also done by render, but not if you are in webgl
+										n.color = color_scheme[ai];
 										n.type = "highlight";
 									}
 								});

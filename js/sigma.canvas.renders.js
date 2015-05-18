@@ -17,7 +17,7 @@ sigma.webgl.nodes.onlylabel = {addNode: function() {}, render: function() {}, in
 	
 	var color = '#FFFFFF';
 	if("colorNumber" in node){
-		color = color_highlights[node.colorNumber];
+		color = color_scheme[node.colorNumber];
 	}       
     
     context.fillStyle = color;

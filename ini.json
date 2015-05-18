@@ -24,8 +24,8 @@
  	},
 "graph1":
 	{
-	"graph_header": "",
-	"basemap": "data/elite_lessattributes.gexf",
+	"graph_header": "Magteliten",
+	"basemap": "data/theelite.gexf",
 	"render": "canvas",
 	"logo_url": "",
 	"spatilize": false,
@@ -35,7 +35,7 @@
 				{"label": "Sektor", "gephiCol": "sector_order_cat", "keepNeighbors": false, "showSelected": false}
 				],
 	"highlight_by":[
-				{"label": "Uddannelses type", "gephiCol": "uddannelse_type", "keepNeighbors": false, "multicolor": false, "showSelected": true},
+				{"label": "Uddannelses type", "gephiCol": "uddannelse_type", "keepNeighbors": false, "multicolor": true, "showSelected": true},
 				{"label": "Uddannelse sted", "gephiCol": "uddannelse_sted", "keepNeighbors": false, "multicolor": false, "showSelected": true},
 				{"label": "Family klasse", "gephiCol": "family_class", "keepNeighbors": false, "multicolor": true, "showSelected": true}
 				],
@@ -57,6 +57,36 @@
 				{"label": "Primær position", "gephiCol": "primary.Position.1"},
 				{"label": "Ca. Alder", "gephiCol": "age_cat"},
 				{"label": "Kongelige medaljer", "gephiCol": "decoration_DK"}
+				]
+	},
+"graph2":
+	{
+	"graph_header": "Organisationer",
+	"basemap": "data/eliteOrg.gexf",
+	"render": "canvas",
+	"logo_url": "",
+	"spatilize": false,
+	"ClickedKeepNeigbors": true,
+	"filter_by":[
+				{"label": "Navn", "gephiCol": "name", "keepNeighbors": true, "showSelected": true}
+				],
+	"highlight_by":[
+				{"label": "", "gephiCol": "", "keepNeighbors": false, "multicolor": true, "showSelected": true}
+				],
+	"merge_by":[
+				{"label": "Merge by", "gephiCol": [""]}
+			   ],
+	"compare_by":[
+				{"label": "Color by", "gephiCol": [""]}
+			   ],
+	"color_by":[
+				{"label": "Color by", "gephiCol": [""]}
+			   ],
+	"size_by":  [
+				""
+				],
+	"details_view":[
+				{"label": "Navn", "gephiCol": "name"}
 				]
 	}
 }

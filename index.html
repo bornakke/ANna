@@ -12,19 +12,19 @@
     <!-- Use sigma.js for tag graph visualisation -->
     <script type="text/javascript" src="js/sigma.min.js"></script>
     <script type="text/javascript" src="js/sigma.parsers.gexf.min.js"></script>
+	<script type="text/javascript" src="js/sigma.classes.camera.js"></script> <!-- fix bug in sigma rendering edges when not needed -->
 	<script async type="text/javascript" src="js/sigma.canvas.renders.js"></script>
 	<script async type="text/javascript" src="js/sigma.layout.forceAtlas2.min.js"></script>
 	<script async type="text/javascript" src="js/sigma.exporters.svg.js"></script>	
    	<script async type="text/javascript" src="js/edgeLabelPlugin/settings.js"></script>		
    	<script async type="text/javascript" src="js/edgeLabelPlugin/sigma.canvas.edges.labels.def.js"></script>
-   
-   
+   	
    
     <!-- For various purposes -->
     <script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
     <script type="text/javascript" src="js/jquery-ui.min.js"></script>
     <script type="text/javascript" src="js/bootstrap.min.js"></script>
-    <script async type="text/javascript" src="js/underscore-1.7.0.min.js"></script>
+    <script type="text/javascript" src="js/underscore-1.7.0.min.js"></script>
     <script async type="text/javascript" src="js/chosen.jquery.min.js"></script>
     
     <!-- ANna JS -->
@@ -63,12 +63,13 @@
     			$("#titel").text(globalsettings.header);	
     			var mode = 0;
     			
-    			if(globalsettings.defaultGraph != ""){
+    			if(globalsettings.defaultGraph.length != ""){
     				window.graph = globalsettings.defaultGraph;
     				mode = 1;
     			}
 				
-    			if(window.graph != ""){//Load specific graph
+    			if(window.graph != "" & !(_.isUndefined(window.graph))){//Load specific graph
+
 	    			window.ini = data[window.graph];
     				enableGraphChanger(mode);
 
