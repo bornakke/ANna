@@ -10,7 +10,7 @@ function drawGraph() {
       		}
   		],
   		//enableEdgeHovering disabled due to it being a heavy burden on selecting nodes. 
-  		settings: {"labelThreshold": 15, "batchEdgesDrawing":true, "hideEdgesOnMove":true, "drawEdges":false, "drawEdgeLabels":false, "enableEdgeHovering":false, "defaultLabelColor": "#4f4d4d"}
+  		settings: {"labelThreshold": 13, "batchEdgesDrawing":true, "hideEdgesOnMove":true, "drawEdgeLabels":false, "enableEdgeHovering":false, "defaultLabelColor": "#4f4d4d"}
   	});
   	
 	//Parse data
@@ -135,7 +135,7 @@ function drawGraph() {
 	
 	//same as resetCamera except no search performed since it is not ready yet.
 	resetCamera();
-	$("#ajaxloader").fadeOut( "slow");
+	$("#loader").fadeOut( "slow");
 	$("#dim").fadeOut( "slow");	
 	s.refresh();
 	
@@ -169,7 +169,8 @@ function createInterface(){
 	$('#menu a:last').tab('show');
 	
 	$('div#savetoCanvasModal').bind('dialogclose', function(event) {
-     	$("#ajaxloader").fadeOut( "fast");
+     	$("#textLoader").text("Vent venligst");
+     	$("#loader").fadeOut( "fast");
 		$("#dim").fadeOut( "fast");	
  	});
 
@@ -202,7 +203,6 @@ function createSingleSelect(filterName, filterObject){
         	placeholder_text_single: 'Chose one entity...',
     		width: '95%'
 		});
-	
 		showMenu(filterName);
 	}
 }
@@ -210,7 +210,7 @@ function createSingleSelect(filterName, filterObject){
 //Create multi select interfaces
 function createMultiSelect(filterName, filterObject){ 
 	var selectValues = getSearchterms(filterObject); 
-
+	
 	if(selectValues != {}){
 		Object.keys(selectValues).forEach(function(gephiCol, i){
 			//console.log(selectValues[filterName]);
@@ -252,7 +252,6 @@ function createGroupedMultiSelect(filterName, filterObject){
 	};
 
 	if(selectValues != {} & !(_.isEmpty(selectValues))){ //Filter is enabled 	
-		console.log(selectValues);
 		
 		//Create two select boxes to populate
 		$("#"+filterName+"_container").append('<select id="'+filterName+'_category" class="chosen-select">'); //Add blank first option to allow deselect
@@ -279,6 +278,7 @@ function createGroupedMultiSelect(filterName, filterObject){
     		});
     		$("#"+filterName+"_terms > option:selected").removeAttr("selected");
     		$("#"+filterName+"_terms").trigger("chosen:updated");
+    		performSearch({skipIndexation:true});
     	});
 		
 		//When selecting terms, automatically perform search
@@ -297,6 +297,7 @@ function createGroupedMultiSelect(filterName, filterObject){
     	
     	
     	$("#"+filterName+"_category").chosen({
+			disable_search_threshold: 10, //Hide search with very few selections
 			search_contains: true,
     		allow_single_deselect: true,
         	placeholder_text_single: 'Chose one entity...',
@@ -342,8 +343,8 @@ function getSearchterms(filterObject){
 			var gephiCol = filterObject[i].gephiCol;
 
 			selectValues[gephiCol] = new Array(); //Prepare Array
-			if(_.isArray(gephiCol)){ //Are this Gephicol a nested array //Change
-	
+			if(filterObject[i].multivalue){ //Are this Gephicol a nested array
+				
 				s.graph.nodes().forEach(function(n) { //Now run through all node for every filter of filterObject type
 					if(n.attributes[gephiCol]){ //Is this filter in this node and not udefined
 						var terms = n.attributes[gephiCol].split("|");
@@ -373,15 +374,14 @@ function getSearchterms(filterObject){
 }
 
 //Get the ID of all nodes that are affected by filter
-function getIds(gephiCol, selector, keepNeighbors, showSelected, nodes){
-	//Todo remove everything with Ids
+function getIds(gephiCol, selector, keepNeighbors, showSelected, multivalue, nodes){
 	var Ids = {};
 	var values = selector.val();
-
+	
+	
 	if(!(_.isArray(values))) //When dealing with single select there is only one value and therefore no array.
 		var values = [values];
-
-		
+	
 	if(gephiCol == "labelBug") //Bug in Chossen
   			gephiCol = "label";
 	//TODO: Not working, don't know why
@@ -397,12 +397,12 @@ function getIds(gephiCol, selector, keepNeighbors, showSelected, nodes){
 		});
 		
 		nodes.forEach(function(n) {
+			
 			//Make sure that the node has a value
 			if((!_.isUndefined(n.attributes[gephiCol])) | (!_.isUndefined(n[gephiCol]))){ 
-				
+
 				//Are this Gephicol a nested array do an extra foreach on the terms
-				//Should probably be updated a bit
-				if(_.isArray(gephiCol)){ 
+				if(multivalue){
 					var terms = n.attributes[gephiCol].split("|");
 				 	//Trim to make sure spaces is not a problem
 					terms = terms.map(function(value){return value.trim();});
@@ -474,7 +474,7 @@ function performSearch(options) {
 				searchValues[filter.gephiCol] = values.join(", ");
 			}
 			
-			var Ids = getIds(filter.gephiCol, selector, filter.keepNeighbors, filter.showSelected, keepNodes);
+			var Ids = getIds(filter.gephiCol, selector, filter.keepNeighbors, filter.showSelected, filters[i].multivalue, keepNodes);
 			if(Object.keys(Ids).length > 0){
 				Object.keys(Ids).forEach(function(term){
 					Ids[term].forEach(function(id){
@@ -622,15 +622,13 @@ function performSearch(options) {
 		}
 	}
 	
-	//
 	//Highlight 
 	filters = ini.highlight_by;
 	if(filters[0].gephiCol != ""){ //Do we need to highlight? 
 		if(!(_.isEmpty(keepNodes))){ //There are still nodes to highlight
 			highlights_Ids = new Array();
-			//gephiCols.forEach(function(gephiCol, i){
 				var gephiCol = $("#highlight_by_category").val();
-				
+
 				for(var j = 0; j < ini.highlight_by.length; j++) {
 					if(ini.highlight_by[j].gephiCol == gephiCol | (gephiCol == "labelBug" & ini.highlight_by[j].gephiCol == "label")){
 					var i = j;
@@ -643,8 +641,8 @@ function performSearch(options) {
 				if(values != null){
 					searchValues[gephiCol] = values.join(", ");
 				}
-						
-				var Ids = getIds(gephiCol, selector, filters[i].keepNeighbors, filters[i].showSelected, keepNodes);
+		
+				var Ids = getIds(gephiCol, selector, filters[i].keepNeighbors, filters[i].showSelected, filters[i].multivalue, keepNodes);
 
 				if(!($.isEmptyObject(Ids))){
 					//Get the id of the search options.
@@ -658,8 +656,6 @@ function performSearch(options) {
 								index.push(ai);
 								$( this ).parent().css("background-image", "none");
 								$( this ).parent().css("background-color", color_scheme[ai]);
-						
-								console.log($( this ).data( "option-array-index" ));
 						
 								//Run through nodes for every choice
 								keepNodes.forEach(function(n){

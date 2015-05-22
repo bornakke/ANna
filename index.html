@@ -52,7 +52,7 @@
     	$('#status').button('loading'); //Set loading sign
     
 		$( "#graph_changer" ).click(function() {
-      		$( "#dialog" ).dialog( "open" );
+      		$( "#selectGraph" ).dialog( "open" );
     	});
     	
     	
@@ -61,27 +61,38 @@
     			window.globalsettings = data.globalsettings;
     			selectGraph(data);
     			$("#titel").text(globalsettings.header);	
-    			var mode = 0;
     			
-    			if(globalsettings.defaultGraph.length != ""){
-    				window.graph = globalsettings.defaultGraph;
-    				mode = 1;
-    			}
-				
-    			if(window.graph != "" & !(_.isUndefined(window.graph))){//Load specific graph
+    			//Start value: Open graph selector unless....
+    			var mode = 2;
 
-	    			window.ini = data[window.graph];
+    			//Only one graph - just load it with no selector (mode=1)
+    			if(Object.keys(data).length == 2){
+    				window.graph = Object.keys(data)[1];
+    				mode = 1;
+    				console.log("hej");
+    			} else if(!(_.isUndefined(window.graph))){   				
+    				//graph already selected --> Load specific graph, but allow selector
+    				mode = 0;
+    			} else if(globalsettings.defaultGraph.length != ""){ //No graph selected, but default value set.
+    				window.graph = globalsettings.defaultGraph;
+    				mode = 0;
+    			}
+
+    			//If graph selected load it (mode !=2)  
+    			if(mode != 2){
+    				//Now load it.
+    				window.ini = data[window.graph];
     				enableGraphChanger(mode);
 
     				if(globalsettings.logo != "" & globalsettings.url != ""){
 	    				changeLogo(globalsettings.logo, globalsettings.logo_url);
 	    			}
     				drawGraph();
-    			}
+    			}		
     			else{
-    				//load select network page
-					enableGraphChanger(2);    			
-	    			$( "#dialog" ).dialog( "open" );
+    				//...else load the selector. 
+					enableGraphChanger(mode);    			
+	    			$( "#selectGraph" ).dialog( "open" );
 	    		}
    	 		})
         	.fail(function(failure) {
@@ -107,8 +118,8 @@
 				<button type="button" id="status" data-loading-text="Loading Search engine..." data-complete-text="Network loaded." data-error-text="The system encountered an error" data-embed-text="Embed code generated:" class="btn btn-info btn-block" autocomplete="off"></button>
 				<!--<code></code>--><input type="text" class="form-control" id="embed">
 			</div>
-			<div id="dialog" title="Select graph">
-  				<p>Please chose basic graph to navigate:</p>
+			<div id="selectGraph" title="Vælg netværk">
+  				<!--<p>Please chose basic graph to navigate:</p>   -->
   				<div id="graphs"></div>
   			</div>
   			<div id="savetoCanvasModal" title="Right click and press 'Save image as...'">
@@ -170,6 +181,7 @@
     							<div class="filter_header"><span class="glyphicon glyphicon-filter"></span> Filter:</div>
     						</div>
     						<div id="highlight_by_container" class="filter_container hide">
+	    					    <label for="filter_by_container" style="display:block; margin-bottom:0px;">Baggrund</label> <!-- Temp magteliten hack -->
 	    					    <div class="filter_header"><span class="glyphicon glyphicon-pushpin"></span> Highlight:</div>
     					    </div>
     						
@@ -196,7 +208,10 @@
         </div>       
 	</div>
 </div>
-<div id="ajaxloader"></div>
+<div id="loader">
+	<div id="ajaxloader"></div>
+	<div id="textLoader">Vent venligst</div>
+</div>
 <div id="dim"></div>
 </body>
 </html>

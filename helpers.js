@@ -1,7 +1,7 @@
-//3 modes: 0 = show titel with link, 1: hide link, but show titel, 2: graph not loaded.
+//3 modes: 0 = show subtitel with link, 1: hide link, but show subtitel, 2: graph not loaded.
 function enableGraphChanger(mode){
 	//Graph changer
-	$( "#dialog" ).dialog({
+	$( "#selectGraph" ).dialog({
     	modal: true,
       	width: 500,
       	autoOpen: false,
@@ -17,10 +17,13 @@ function enableGraphChanger(mode){
 	if(mode != 2){
 		if(ini.graph_header != ""){ //Add subtitel	
 			if(mode == 1){
-    			$("#titel").append(' <small> - '+ini.graph_header+'</small>');	
+				$("#titel").append(' <small> - '+ini.graph_header+'</small>');	
 			}
 			else{
-				$("#titel").append('<small> - <a id="graph_changer" href="#">'+ini.graph_header+'</a><span class="glyphicon glyphicon-book"></span></small>');
+				//$("#titel").append('<small> - <a id="graph_changer" href="#">'+ini.graph_header+'</a><span class="glyphicon glyphicon-book"></span></small>');
+				//Magteliten
+				$("#titel").append('<small> - <a id="graph_changer" href="#">Vælg dataset</a><span class="glyphicon glyphicon-book"></span></small>');
+
     		}
 			$( '.ui-dialog-titlebar-close')[0].style.display = 'inline';
 		}
@@ -30,7 +33,7 @@ function enableGraphChanger(mode){
 	}	
     
 	$( "#graph_changer" ).click(function() {
-    	$( "#dialog" ).dialog( "open" );
+    	$( "#selectGraph" ).dialog( "open" );
     });
 }
 
@@ -178,7 +181,7 @@ function changeRender(type){
 //Capture canvas to png. Only works with canvas render.
 function captureCanvas(){
 	
-	$("#ajaxloader").fadeIn( "fast");
+	$("#loader").fadeIn( "fast");
 	$("#dim").fadeIn( "fast");	
 	
 	//TODO: If sentencen which makes that only changes render if not canvas is set already.
@@ -210,7 +213,8 @@ function captureCanvas(){
 }
 
 function createEmbed(){
-	$("#ajaxloader").fadeIn( "fast");
+	$("#textLoader").text("Netværk-embed genereres. Dette kan tage op til 1 minut.");
+	$("#loader").fadeIn( "fast");
 	$("#dim").fadeIn( "fast");	
 	
 	//Create json
@@ -455,12 +459,7 @@ function translate(){
 			$("#"+key+"Label").text(translations[key]);
 		}
 		if(key == "savetoCanvasModal"){
-			//console.log($( "#ui-id-1" ));
 			$( "#ui-id-1" ).text(translations[key]);
-		}
-		else{ //Status texts
-			var arrayKey = key.split("_");
-			$("#status").data( arrayKey[1]+"-text", translations[key]);
 		}
 	});
 }

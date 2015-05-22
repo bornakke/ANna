@@ -18,8 +18,8 @@
  			"status_loading": "Indlæser netværk...",
  			"status_complete": "Netværk indlæst.",
  			"status_error": "Der er desværre opstået en fejl.",
- 			"status_embed": "Embed kode genereret.",
- 			"savetoCanvasModal": "Højre klik og vælg 'Gem billede som...'"
+ 			"status_embed": "Embed kode genereret."
+ 			
  			}
  	},
 "graph1":
@@ -32,12 +32,14 @@
 	"ClickedKeepNeigbors": true,
 	"filter_by":[
 				{"label": "Navn", "gephiCol": "name", "keepNeighbors": true, "showSelected": true},
-				{"label": "Sektor", "gephiCol": "sector_order_cat", "keepNeighbors": false, "showSelected": false}
+				{"label": "Sektor", "gephiCol": "Sector_order_cat_danish", "keepNeighbors": false, "showSelected": false}
 				],
 	"highlight_by":[
-				{"label": "Uddannelses type", "gephiCol": "uddannelse_type", "keepNeighbors": false, "multicolor": true, "showSelected": true},
-				{"label": "Uddannelse sted", "gephiCol": "uddannelse_sted", "keepNeighbors": false, "multicolor": false, "showSelected": true},
-				{"label": "Family klasse", "gephiCol": "family_class", "keepNeighbors": false, "multicolor": true, "showSelected": true}
+				{"label": "Bopælskommune", "gephiCol": "kommune", "keepNeighbors": false, "multicolor": true, "showSelected": false},
+				{"label": "Uddannelses-type", "gephiCol": "uddannelse_type", "keepNeighbors": false, "multicolor": true, "showSelected": true},
+				{"label": "Uddannelses-felt", "gephiCol": "uddannelse", "keepNeighbors": false, "multicolor": true, "showSelected": false},
+				{"label": "Uddannelses-sted", "gephiCol": "uddannelse_sted", "keepNeighbors": false, "multicolor": true, "showSelected": true},
+				{"label": "Family klasse", "gephiCol": "Family_class_danish", "keepNeighbors": false, "multicolor": true, "showSelected": false}
 				],
 	"merge_by":[
 				{"label": "Merge by", "gephiCol": [""]}
@@ -53,17 +55,19 @@
 				],
 	"details_view":[
 				{"label": "Navn", "gephiCol": "name"},
-				{"label": "Title", "gephiCol": "title"},
-				{"label": "Primær position", "gephiCol": "primary.Position.1"},
-				{"label": "Ca. Alder", "gephiCol": "age_cat"},
-				{"label": "Kongelige medaljer", "gephiCol": "decoration_DK"}
+				{"label": "Primær position", "gephiCol": "titel_and_position"},
+				{"label": "Magtposition", "gephiCol": "est_rank_PE"},
+				{"label": "Alder", "gephiCol": "age_cat"},
+				{"label": "Uddannelses-type", "gephiCol": "uddannelse_type"},
+				{"label": "Uddannelse-sted", "gephiCol": "uddannelse_sted"}, 
+				{"label": "Bopæl", "gephiCol": "kommune"}
 				]
 	},
 "graph2":
 	{
 	"graph_header": "Organisationer",
 	"basemap": "data/eliteOrg.gexf",
-	"render": "canvas",
+	"render": "webgl",
 	"logo_url": "",
 	"spatilize": false,
 	"ClickedKeepNeigbors": true,
@@ -71,7 +75,7 @@
 				{"label": "Navn", "gephiCol": "name", "keepNeighbors": true, "showSelected": true}
 				],
 	"highlight_by":[
-				{"label": "", "gephiCol": "", "keepNeighbors": false, "multicolor": true, "showSelected": true}
+				{"label": "Sektor", "gephiCol": "tags", "keepNeighbors": false, "multicolor": true, "showSelected": false, "multivalue": true}
 				],
 	"merge_by":[
 				{"label": "Merge by", "gephiCol": [""]}
@@ -86,7 +90,9 @@
 				""
 				],
 	"details_view":[
-				{"label": "Navn", "gephiCol": "name"}
+				{"label": "Navn", "gephiCol": "name"},
+				{"label": "Kilde", "gephiCol": "source"},
+				{"label": "CVR", "gephiCol": "cvr"}
 				]
 	}
 }
