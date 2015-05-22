@@ -32,14 +32,14 @@
 	"ClickedKeepNeigbors": true,
 	"filter_by":[
 				{"label": "Navn", "gephiCol": "name", "keepNeighbors": true, "showSelected": true},
-				{"label": "Sektor", "gephiCol": "Sector_order_cat_danish", "keepNeighbors": false, "showSelected": false}
+				{"label": "Sektor", "gephiCol": "sector_order_cat_danish", "keepNeighbors": false, "showSelected": false}
 				],
 	"highlight_by":[
 				{"label": "Bopælskommune", "gephiCol": "kommune", "keepNeighbors": false, "multicolor": true, "showSelected": false},
 				{"label": "Uddannelses-type", "gephiCol": "uddannelse_type", "keepNeighbors": false, "multicolor": true, "showSelected": true},
 				{"label": "Uddannelses-felt", "gephiCol": "uddannelse", "keepNeighbors": false, "multicolor": true, "showSelected": false},
 				{"label": "Uddannelses-sted", "gephiCol": "uddannelse_sted", "keepNeighbors": false, "multicolor": true, "showSelected": true},
-				{"label": "Family klasse", "gephiCol": "Family_class_danish", "keepNeighbors": false, "multicolor": true, "showSelected": false}
+				{"label": "Social klasse", "gephiCol": "family_class_danish", "keepNeighbors": false, "multicolor": true, "showSelected": false}
 				],
 	"merge_by":[
 				{"label": "Merge by", "gephiCol": [""]}
