@@ -55,6 +55,22 @@
       		$( "#selectGraph" ).dialog( "open" );
     	});
     	
+    	$( "#intro" ).dialog({
+    	modal: true,
+      	width: 500,
+      	autoOpen: false,
+      	show: {
+		effect: "blind",
+			duration: 500
+		},
+		hide: {
+			effect: "explode",
+			duration: 500
+		}
+		});
+    	
+    	$( "#intro" ).dialog( "open" );
+    	
     	
     	$.getJSON( "ini.json")
 	   	 	.done(function(data) {
@@ -69,7 +85,6 @@
     			if(Object.keys(data).length == 2){
     				window.graph = Object.keys(data)[1];
     				mode = 1;
-    				console.log("hej");
     			} else if(!(_.isUndefined(window.graph))){   				
     				//graph already selected --> Load specific graph, but allow selector
     				mode = 0;
@@ -124,6 +139,11 @@
   			</div>
   			<!--<div id="savetoCanvasModal" title="Right click and press 'Save image as...'">-->
   			<div id="savetoCanvasModal" title="Højre klik og tryk 'Save image as...'">
+  			</div>
+  			<div id="intro" title="Velkommen til Magteliten">
+  				<p style="font-size:10pt;">På følgende side kan du gå på opdagelse i inderkernen på den danskemagtelite. Hver cirkel repræsenterer et medlem af inderkernen og dets størrelse viser hvor vel-forbundet personen er til resten af netværket. Du kan bevæge dig rundt i netværket ved at holde højre musseknap med og trække i grafen. </p>
+				<p style="font-size:10pt;">Til højre på siden kan du fremhæve og filterer netværket. Du kan blandt andet undersøge hvor i Danmark de forskellige dele af netværket kommer fra eller hvor mange bagere og økonomer der er blandt eliten. Hvis du vil dele netværket med andre kan du bruge funktionerne til venstre.</p>
+				<p style="font-size:10pt;"><i>God fornøjelse.</i></p>
   			</div>
       	</div>
 	  	
